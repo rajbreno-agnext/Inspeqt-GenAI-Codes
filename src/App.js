@@ -2,38 +2,43 @@ import React from 'react';
 import {
   ChakraProvider,
   Box,
-  Text,
-  Link,
-  VStack,
-  Code,
-  Grid,
-  theme,
+  extendTheme,
 } from '@chakra-ui/react';
-import { ColorModeSwitcher } from './ColorModeSwitcher';
-import { Logo } from './Logo';
+import CreateJobPage from './pages/CreateJobPage';
+
+const theme = extendTheme({
+  colors: {
+    brand: {
+      50: '#E6FFFA',
+      100: '#B2F5EA',
+      200: '#81E6D9',
+      300: '#4FD1C5',
+      400: '#38B2AC',
+      500: '#319795',
+      600: '#2C7A7B',
+      700: '#285E61',
+      800: '#234E52',
+      900: '#1D4044',
+    },
+  },
+  config: {
+    initialColorMode: 'light',
+    useSystemColorMode: false,
+  },
+  components: {
+    Button: {
+      defaultProps: {
+        colorScheme: 'brand',
+      },
+    },
+  },
+});
 
 function App() {
   return (
     <ChakraProvider theme={theme}>
-      <Box textAlign="center" fontSize="xl">
-        <Grid minH="100vh" p={3}>
-          <ColorModeSwitcher justifySelf="flex-end" />
-          <VStack spacing={8}>
-            <Logo h="40vmin" pointerEvents="none" />
-            <Text>
-              Edit <Code fontSize="xl">src/App.js</Code> and save to reload.
-            </Text>
-            <Link
-              color="teal.500"
-              href="https://chakra-ui.com"
-              fontSize="2xl"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn Chakra
-            </Link>
-          </VStack>
-        </Grid>
+      <Box bg="gray.50" minHeight="100vh">
+        <CreateJobPage />
       </Box>
     </ChakraProvider>
   );
