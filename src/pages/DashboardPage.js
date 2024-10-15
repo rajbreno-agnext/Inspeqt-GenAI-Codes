@@ -56,7 +56,7 @@ const DashboardPage = () => {
               colorScheme="gray"
               aria-label="Menu"
             />
-            <Text fontSize="xl" fontWeight="bold">Home</Text>
+            <Text fontSize="xl" fontWeight="bold" color="gray.700">Home</Text>
           </HStack>
           <HStack spacing={3}>
             <IconButton
@@ -76,7 +76,7 @@ const DashboardPage = () => {
 
         {/* Greeting */}
         <VStack align="center" spacing={1} my={6}>
-          <Text fontSize="2xl" fontWeight="bold">
+          <Text fontSize="2xl" fontWeight="bold" color="gray.700">
             Hi, Amit 👋
           </Text>
           <Text color="gray.500">Welcome back!</Text>
@@ -84,11 +84,11 @@ const DashboardPage = () => {
 
         {/* Completion Score */}
         <Box bg="green.600" borderRadius="lg" p={4} color="white">
-          <Flex justifyContent="space-between" alignItems="center" mb={2}>
+          <Flex justifyContent="space-between" alignItems="center" mb={4}>
             <Text fontWeight="bold">Completion Score</Text>
             <Icon as={FiInfo} />
           </Flex>
-          <Box height="150px" position="relative">
+          <Box height="164px" position="relative">
             <Doughnut data={chartData} options={chartOptions} />
             <Flex
               position="absolute"
@@ -100,7 +100,7 @@ const DashboardPage = () => {
               justifyContent="center"
               flexDirection="column"
             >
-              <Text fontSize="3xl" fontWeight="bold">
+              <Text fontSize="2xl" fontWeight="bold">
                 {completionScore}%
               </Text>
               <Text fontSize="sm">Score</Text>
@@ -125,9 +125,9 @@ const DashboardPage = () => {
               boxShadow="sm"
             >
               <Icon as={item.icon} color={item.color} boxSize={5} mr={3} />
-              <Text fontWeight="medium">{item.label}</Text>
+              <Text fontWeight="normal" color="gray.700">{item.label}</Text>
               <Spacer />
-              <Text fontWeight="bold">{item.count}</Text>
+              <Text fontWeight="bold" color="gray.700">{item.count}</Text>
               <Icon as={FiChevronRight} ml={2} color="gray.400" />
             </Flex>
           ))}
@@ -162,6 +162,7 @@ const DashboardPage = () => {
             icon={<RiFileList3Line />}
             variant="ghost"
             aria-label="Inspections"
+            color="gray.500"
           />
           <Text fontSize="xs" color="gray.500">Inspections</Text>
         </VStack>
@@ -170,6 +171,7 @@ const DashboardPage = () => {
             icon={<RiUser3Line />}
             variant="ghost"
             aria-label="Account"
+            color="gray.500"
           />
           <Text fontSize="xs" color="gray.500">Account</Text>
         </VStack>
