@@ -4,6 +4,9 @@ import {
   Box,
   extendTheme,
 } from '@chakra-ui/react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import DashboardPage from './pages/DashboardPage';
 import CreateJobPage from './pages/CreateJobPage';
 
 const theme = extendTheme({
@@ -25,21 +28,20 @@ const theme = extendTheme({
     initialColorMode: 'light',
     useSystemColorMode: false,
   },
-  components: {
-    Button: {
-      defaultProps: {
-        colorScheme: 'brand',
-      },
-    },
-  },
 });
 
 function App() {
   return (
     <ChakraProvider theme={theme}>
-      <Box bg="gray.50" minHeight="100vh">
-        <CreateJobPage />
-      </Box>
+      <Router>
+        <Box bg="gray.50" minHeight="100vh">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/create-job" element={<CreateJobPage />} />
+          </Routes>
+        </Box>
+      </Router>
     </ChakraProvider>
   );
 }
