@@ -36,7 +36,9 @@ import {
   SliderThumb,
 } from '@chakra-ui/react';
 import { AddIcon, ChevronDownIcon, ChevronUpIcon, DragHandleIcon, SearchIcon } from '@chakra-ui/icons';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { 
   MdTextFields, MdShortText, MdSubject, 
   MdCheckBox, MdArrowDropDownCircle, MdLinearScale,
@@ -49,6 +51,13 @@ const FormBuilderPage = () => {
   const [formSections, setFormSections] = useState([{ id: 'section-1', isOpen: true, elements: [] }]);
   const [searchQuery, setSearchQuery] = useState('');
   const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const addElement = (elementType, sectionIndex, elementIndex) => {
     const newSections = [...formSections];
@@ -64,23 +73,33 @@ const FormBuilderPage = () => {
     onMenuClose();
   };
 
-  const onDragEnd = (result) => {
-    if (!result.destination) return;
-    const { source, destination } = result;
-    const newSections = [...formSections];
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
 
-    if (source.droppableId === destination.droppableId) {
-      const sectionIndex = formSections.findIndex(section => section.id === source.droppableId);
-      const [reorderedItem] = newSections[sectionIndex].elements.splice(source.index, 1);
-      newSections[sectionIndex].elements.splice(destination.index, 0, reorderedItem);
-    } else {
-      const sourceSectionIndex = formSections.findIndex(section => section.id === source.droppableId);
-      const destSectionIndex = formSections.findIndex(section => section.id === destination.droppableId);
-      const [movedItem] = newSections[sourceSectionIndex].elements.splice(source.index, 1);
-      newSections[destSectionIndex].elements.splice(destination.index, 0, movedItem);
+    if (active.id !== over.id) {
+      setFormSections((sections) => {
+        const oldIndex = sections.findIndex((section) => 
+          section.elements.some((element) => element.id === active.id)
+        );
+        const newIndex = sections.findIndex((section) => 
+          section.elements.some((element) => element.id === over.id)
+        );
+
+        const updatedSections = [...sections];
+        const [movedItem] = updatedSections[oldIndex].elements.splice(
+          updatedSections[oldIndex].elements.findIndex((element) => element.id === active.id),
+          1
+        );
+
+        updatedSections[newIndex].elements.splice(
+          updatedSections[newIndex].elements.findIndex((element) => element.id === over.id),
+          0,
+          movedItem
+        );
+
+        return updatedSections;
+      });
     }
-
-    setFormSections(newSections);
   };
 
   const menuItems = [
@@ -252,9 +271,73 @@ const FormBuilderPage = () => {
     }
   };
 
+  const SortableItem = ({ element, sectionIndex, elementIndex }) => {
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+    } = useSortable({ id: element.id });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+
+    return (
+      <Box
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        bg="white"
+        p={4}
+        borderRadius="md"
+        boxShadow="sm"
+        borderWidth="1px"
+        borderColor="gray.200"
+        position="relative"
+        _hover={{
+          "& > .element-actions": {
+            opacity: 1,
+          }
+        }}
+      >
+        <Flex justify="space-between" align="center" mb={2}>
+          <Flex align="center">
+            <Text fontWeight="bold">{element.type}</Text>
+          </Flex>
+        </Flex>
+        {renderFormElement(element)}
+        <Flex 
+          className="element-actions"
+          position="absolute"
+          top={2}
+          right={2}
+          opacity={0}
+          transition="opacity 0.2s"
+        >
+          <IconButton
+            {...listeners}
+            icon={<DragHandleIcon />}
+            aria-label="Drag"
+            variant="ghost"
+            size="sm"
+            mr={1}
+          />
+          {renderMenuItems(menuItems, sectionIndex, elementIndex)}
+        </Flex>
+      </Box>
+    );
+  };
+
   return (
     <Box maxWidth="800px" margin="auto" p={4}>
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DndContext 
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
         {formSections.map((section, sectionIndex) => (
           <Box 
             key={section.id}
@@ -305,70 +388,26 @@ const FormBuilderPage = () => {
             </Flex>
             <Collapse in={section.isOpen}>
               <Box p={4}>
-                <Droppable droppableId={section.id}>
-                  {(provided) => (
-                    <VStack
-                      spacing={4}
-                      align="stretch"
-                      {...provided.droppableProps}
-                      ref={provided.innerRef}
-                    >
-                      {section.elements.map((element, elementIndex) => (
-                        <Draggable key={element.id} draggableId={element.id} index={elementIndex}>
-                          {(provided, snapshot) => (
-                            <Box
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              bg="white"
-                              p={4}
-                              borderRadius="md"
-                              boxShadow="sm"
-                              borderWidth="1px"
-                              borderColor="gray.200"
-                              position="relative"
-                              _hover={{
-                                "& > .element-actions": {
-                                  opacity: 1,
-                                }
-                              }}
-                            >
-                              <Flex justify="space-between" align="center" mb={2}>
-                                <Flex align="center">
-                                  <Text fontWeight="bold">{element.type}</Text>
-                                </Flex>
-                              </Flex>
-                              {renderFormElement(element)}
-                              <Flex 
-                                className="element-actions"
-                                position="absolute"
-                                top={2}
-                                right={2}
-                                opacity={0}
-                                transition="opacity 0.2s"
-                              >
-                                <IconButton
-                                  {...provided.dragHandleProps}
-                                  icon={<DragHandleIcon />}
-                                  aria-label="Drag"
-                                  variant="ghost"
-                                  size="sm"
-                                  mr={1}
-                                />
-                                {renderMenuItems(menuItems, sectionIndex, elementIndex)}
-                              </Flex>
-                            </Box>
-                          )}
-                        </Draggable>
-                      ))}
-                      {provided.placeholder}
-                    </VStack>
-                  )}
-                </Droppable>
+                <SortableContext 
+                  items={section.elements.map(element => element.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <VStack spacing={4} align="stretch">
+                    {section.elements.map((element, elementIndex) => (
+                      <SortableItem 
+                        key={element.id} 
+                        element={element} 
+                        sectionIndex={sectionIndex} 
+                        elementIndex={elementIndex} 
+                      />
+                    ))}
+                  </VStack>
+                </SortableContext>
               </Box>
             </Collapse>
           </Box>
         ))}
-      </DragDropContext>
+      </DndContext>
     </Box>
   );
 };
