@@ -93,6 +93,11 @@ const FormBuilderPage = () => {
   const handleDragEnd = (event) => {
     const { active, over } = event;
 
+    if (!over) {
+      setActiveId(null);
+      return;
+    }
+
     if (active.id !== over.id) {
       setFormSections((sections) => {
         const oldIndex = sections.findIndex(section => section.id === active.id);
