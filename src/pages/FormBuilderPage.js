@@ -586,7 +586,7 @@ const FormBuilderPage = () => {
       maxWidth="800px" 
       margin="auto" 
       p={4} 
-      height="calc(100vh - 100px)" 
+    //   height="calc(100vh - 100px)" 
       overflowY="auto"
       ref={containerRef}
     >
