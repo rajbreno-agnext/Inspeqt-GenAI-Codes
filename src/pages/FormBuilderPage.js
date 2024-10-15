@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import {
   Box,
   VStack,
@@ -54,6 +54,8 @@ const FormBuilderPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure();
   const [activeId, setActiveId] = useState(null);
+  const [visibleRange, setVisibleRange] = useState({ start: 0, end: 20 });
+  const containerRef = useRef(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -62,7 +64,38 @@ const FormBuilderPage = () => {
     })
   );
 
-  const addElement = (elementType, sectionIndex, elementIndex) => {
+  // Memoize menuItems
+  const menuItems = useMemo(() => [
+    { group: 'Blocks', items: [
+      { icon: HiViewBoards, label: 'Add Section' },
+    ]},
+    { group: 'Text', items: [
+      { icon: MdShortText, label: 'Short answer' },
+      { icon: MdSubject, label: 'Long answer' },
+    ]},
+    { group: 'Choices', items: [
+      { icon: MdCheckBox, label: 'Single select' },
+      { icon: MdCheckBox, label: 'Multi select' },
+      { icon: MdCheckBox, label: 'Checkbox' },
+      { icon: MdArrowDropDownCircle, label: 'Dropdown' },
+      { icon: MdLinearScale, label: 'Slider' },
+    ]},
+    { group: 'Number', items: [
+      { icon: FaHashtag, label: 'Number' },
+    ]},
+    { group: 'Contact info', items: [
+      { icon: MdEmail, label: 'Email input' },
+      { icon: MdPhone, label: 'Phone number' },
+      { icon: MdDateRange, label: 'Date / time picker' },
+    ]},
+    { group: 'Uploads', items: [
+      { icon: MdImage, label: 'Media' },
+      { icon: MdCloudUpload, label: 'File uploader' },
+    ]},
+  ], []);
+
+  // Memoize and optimize addElement
+  const addElement = useCallback((elementType, sectionIndex, elementIndex) => {
     setFormSections(prevSections => {
       const newSections = [...prevSections];
       if (elementType === 'Add Section') {
@@ -83,14 +116,15 @@ const FormBuilderPage = () => {
       return newSections;
     });
     onMenuClose();
-  };
+  }, [onMenuClose]);
 
   const handleDragStart = (event) => {
     const { active } = event;
     setActiveId(active.id);
   };
 
-  const handleDragEnd = (event) => {
+  // Memoize handleDragEnd
+  const handleDragEnd = useCallback((event) => {
     const { active, over } = event;
 
     if (!over) {
@@ -143,7 +177,7 @@ const FormBuilderPage = () => {
       });
     }
     setActiveId(null);
-  };
+  }, []);
 
   const duplicateElement = (sectionIndex, elementIndex) => {
     setFormSections(prevSections => {
@@ -188,35 +222,6 @@ const FormBuilderPage = () => {
   const deleteSection = (sectionIndex) => {
     setFormSections(prevSections => prevSections.filter((_, index) => index !== sectionIndex));
   };
-
-  const menuItems = [
-    { group: 'Blocks', items: [
-      { icon: HiViewBoards, label: 'Add Section' },
-    ]},
-    { group: 'Text', items: [
-      { icon: MdShortText, label: 'Short answer' },
-      { icon: MdSubject, label: 'Long answer' },
-    ]},
-    { group: 'Choices', items: [
-      { icon: MdCheckBox, label: 'Single select' },
-      { icon: MdCheckBox, label: 'Multi select' },
-      { icon: MdCheckBox, label: 'Checkbox' },
-      { icon: MdArrowDropDownCircle, label: 'Dropdown' },
-      { icon: MdLinearScale, label: 'Slider' },
-    ]},
-    { group: 'Number', items: [
-      { icon: FaHashtag, label: 'Number' },
-    ]},
-    { group: 'Contact info', items: [
-      { icon: MdEmail, label: 'Email input' },
-      { icon: MdPhone, label: 'Phone number' },
-      { icon: MdDateRange, label: 'Date / time picker' },
-    ]},
-    { group: 'Uploads', items: [
-      { icon: MdImage, label: 'Media' },
-      { icon: MdCloudUpload, label: 'File uploader' },
-    ]},
-  ];
 
   const handleSearch = useCallback((e) => {
     setSearchQuery(e.target.value);
@@ -272,6 +277,9 @@ const FormBuilderPage = () => {
                   key={itemIndex} 
                   icon={<item.icon />} 
                   onClick={() => addElement(item.label, sectionIndex, elementIndex)}
+                  _hover={{ bg: 'gray.50', color: 'inherit' }}
+                  _focus={{ bg: 'gray.50', color: 'inherit' }}
+                  _active={{ bg: 'gray.100', color: 'inherit' }}
                 >
                   {item.label}
                 </MenuItem>
@@ -358,7 +366,8 @@ const FormBuilderPage = () => {
     }
   };
 
-  const SortableItem = ({ element, sectionIndex, elementIndex }) => {
+  // Memoize SortableItem component
+  const SortableItem = React.memo(({ element, sectionIndex, elementIndex }) => {
     const {
       attributes,
       listeners,
@@ -432,9 +441,10 @@ const FormBuilderPage = () => {
         </Flex>
       </Box>
     );
-  };
+  });
 
-  const SortableSection = ({ section, sectionIndex }) => {
+  // Memoize SortableSection component
+  const SortableSection = React.memo(({ section, sectionIndex }) => {
     const {
       attributes,
       listeners,
@@ -545,10 +555,41 @@ const FormBuilderPage = () => {
         </Collapse>
       </Box>
     );
-  };
+  });
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (containerRef.current) {
+        const { scrollTop, clientHeight, scrollHeight } = containerRef.current;
+        const itemHeight = 100; // Approximate height of each item
+        const start = Math.floor(scrollTop / itemHeight);
+        const end = Math.min(start + Math.ceil(clientHeight / itemHeight) + 1, formSections.length);
+        setVisibleRange({ start, end });
+      }
+    };
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      handleScroll(); // Initial call
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [formSections.length]);
 
   return (
-    <Box maxWidth="800px" margin="auto" p={4}>
+    <Box 
+      maxWidth="800px" 
+      margin="auto" 
+      p={4} 
+      height="calc(100vh - 100px)" 
+      overflowY="auto"
+      ref={containerRef}
+    >
       <DndContext 
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -559,11 +600,11 @@ const FormBuilderPage = () => {
           items={formSections.map(section => section.id)}
           strategy={verticalListSortingStrategy}
         >
-          {formSections.map((section, sectionIndex) => (
+          {formSections.slice(visibleRange.start, visibleRange.end).map((section, index) => (
             <SortableSection
               key={section.id}
               section={section}
-              sectionIndex={sectionIndex}
+              sectionIndex={visibleRange.start + index}
             />
           ))}
         </SortableContext>
@@ -590,4 +631,4 @@ const FormBuilderPage = () => {
   );
 };
 
-export default FormBuilderPage;
+export default React.memo(FormBuilderPage);
