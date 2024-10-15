@@ -34,6 +34,31 @@ const theme = extendTheme({
         }),
       },
     },
+    IconButton: {
+      variants: {
+        ghost: {
+          _hover: {
+            bg: 'gray.100',
+          },
+        },
+      },
+    },
+    Menu: {
+      baseStyle: {
+        list: {
+          boxShadow: 'md',
+          borderRadius: 'md',
+        },
+        item: {
+          _focus: {
+            bg: 'brand.50',
+          },
+          _hover: {
+            bg: 'brand.50',
+          },
+        },
+      },
+    },
     // Add more component style overrides here
   },
   // Add more theme customizations here

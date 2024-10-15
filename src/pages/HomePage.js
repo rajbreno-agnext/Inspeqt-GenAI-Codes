@@ -6,6 +6,7 @@ const navigationButtons = [
   { name: 'Dashboard', path: '/dashboard' },
   { name: 'Create Job', path: '/create-job' },
   { name: 'Sidebar Preview', path: '/sidebar' },
+  { name: 'Form Builder', path: '/form-builder' },
   // Add more navigation buttons here as needed
 ];
 
