@@ -63,16 +63,25 @@ const FormBuilderPage = () => {
   );
 
   const addElement = (elementType, sectionIndex, elementIndex) => {
-    const newSections = [...formSections];
-    if (elementType === 'Add Section') {
-      const newSection = { id: `section-${Date.now()}`, isOpen: true, elements: [] };
-      newSections.splice(sectionIndex + 1, 0, newSection);
-    } else {
-      const newElement = { type: elementType, id: Date.now().toString() };
-      newSections[sectionIndex].elements.splice(elementIndex + 1, 0, newElement);
-      newSections[sectionIndex].isOpen = true; // Automatically open the section
-    }
-    setFormSections(newSections);
+    setFormSections(prevSections => {
+      const newSections = [...prevSections];
+      if (elementType === 'Add Section') {
+        const newSection = { id: `section-${Date.now()}`, isOpen: true, elements: [] };
+        newSections.splice(sectionIndex + 1, 0, newSection);
+      } else {
+        const newElement = { type: elementType, id: Date.now().toString() };
+        newSections[sectionIndex] = {
+          ...newSections[sectionIndex],
+          isOpen: true,
+          elements: [
+            ...newSections[sectionIndex].elements.slice(0, elementIndex + 1),
+            newElement,
+            ...newSections[sectionIndex].elements.slice(elementIndex + 1)
+          ]
+        };
+      }
+      return newSections;
+    });
     onMenuClose();
   };
 
@@ -86,6 +95,14 @@ const FormBuilderPage = () => {
 
     if (active.id !== over.id) {
       setFormSections((sections) => {
+        const oldIndex = sections.findIndex(section => section.id === active.id);
+        const newIndex = sections.findIndex(section => section.id === over.id);
+
+        // If dragging sections
+        if (oldIndex !== -1 && newIndex !== -1) {
+          return arrayMove(sections, oldIndex, newIndex);
+        }
+
         let oldSectionIndex = sections.findIndex((section) => 
           section.elements.some((element) => element.id === active.id)
         );
@@ -124,37 +141,47 @@ const FormBuilderPage = () => {
   };
 
   const duplicateElement = (sectionIndex, elementIndex) => {
-    setFormSections(sections => {
-      const newSections = [...sections];
+    setFormSections(prevSections => {
+      const newSections = [...prevSections];
       const elementToDuplicate = { ...newSections[sectionIndex].elements[elementIndex], id: Date.now().toString() };
-      newSections[sectionIndex].elements.splice(elementIndex + 1, 0, elementToDuplicate);
+      newSections[sectionIndex] = {
+        ...newSections[sectionIndex],
+        elements: [
+          ...newSections[sectionIndex].elements.slice(0, elementIndex + 1),
+          elementToDuplicate,
+          ...newSections[sectionIndex].elements.slice(elementIndex + 1)
+        ]
+      };
       return newSections;
     });
   };
 
   const deleteElement = (sectionIndex, elementIndex) => {
-    setFormSections(sections => {
-      const newSections = [...sections];
-      newSections[sectionIndex].elements.splice(elementIndex, 1);
+    setFormSections(prevSections => {
+      const newSections = [...prevSections];
+      newSections[sectionIndex] = {
+        ...newSections[sectionIndex],
+        elements: newSections[sectionIndex].elements.filter((_, index) => index !== elementIndex)
+      };
       return newSections;
     });
   };
 
   const duplicateSection = (sectionIndex) => {
-    setFormSections(sections => {
-      const newSections = [...sections];
-      const sectionToDuplicate = { ...newSections[sectionIndex], id: `section-${Date.now()}` };
+    setFormSections(prevSections => {
+      const newSections = [...prevSections];
+      const sectionToDuplicate = {
+        ...newSections[sectionIndex],
+        id: `section-${Date.now()}`,
+        elements: newSections[sectionIndex].elements.map(element => ({ ...element, id: Date.now().toString() }))
+      };
       newSections.splice(sectionIndex + 1, 0, sectionToDuplicate);
       return newSections;
     });
   };
 
   const deleteSection = (sectionIndex) => {
-    setFormSections(sections => {
-      const newSections = [...sections];
-      newSections.splice(sectionIndex, 1);
-      return newSections;
-    });
+    setFormSections(prevSections => prevSections.filter((_, index) => index !== sectionIndex));
   };
 
   const menuItems = [
@@ -402,6 +429,119 @@ const FormBuilderPage = () => {
     );
   };
 
+  const SortableSection = ({ section, sectionIndex }) => {
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+    } = useSortable({ id: section.id });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+
+    return (
+      <Box 
+        ref={setNodeRef}
+        style={style}
+        bg="white" 
+        borderRadius="md" 
+        boxShadow="sm" 
+        mb={4} 
+        overflow="visible"
+        position="relative"
+      >
+        <Flex 
+          justify="space-between" 
+          align="center" 
+          p={4} 
+          borderBottomWidth={section.isOpen ? "1px" : "0"}
+          borderBottomColor="gray.200"
+          position="relative"
+          _hover={{
+            "& > .section-actions": {
+              opacity: 1,
+            }
+          }}
+        >
+          <Flex align="center" onClick={() => {
+            const newSections = [...formSections];
+            newSections[sectionIndex].isOpen = !newSections[sectionIndex].isOpen;
+            setFormSections(newSections);
+          }} cursor="pointer" flex={1}>
+            <Heading size="md">Section {sectionIndex + 1}</Heading>
+            <IconButton
+              icon={section.isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
+              variant="ghost"
+              aria-label={section.isOpen ? "Collapse section" : "Expand section"}
+              ml={2}
+            />
+          </Flex>
+          <Flex 
+            className="section-actions"
+            opacity={0}
+            transition="opacity 0.2s"
+            position="absolute"
+            right={4}
+            top="50%"
+            transform="translateY(-50%)"
+          >
+            <IconButton
+              icon={<MdContentCopy />}
+              aria-label="Duplicate Section"
+              variant="ghost"
+              size="sm"
+              mr={1}
+              onClick={() => duplicateSection(sectionIndex)}
+            />
+            {formSections.length > 1 && (
+              <IconButton
+                icon={<AiOutlineDelete />}
+                aria-label="Delete Section"
+                variant="ghost"
+                size="sm"
+                mr={1}
+                onClick={() => deleteSection(sectionIndex)}
+              />
+            )}
+            {renderMenuItems(menuItems, sectionIndex, -1)}
+            <IconButton
+              {...attributes}
+              {...listeners}
+              icon={<DragHandleIcon />}
+              aria-label="Drag Section"
+              variant="ghost"
+              size="sm"
+              cursor="grab"
+            />
+          </Flex>
+        </Flex>
+        <Collapse in={section.isOpen}>
+          <Box p={4}>
+            <SortableContext 
+              items={section.elements.map(element => element.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <VStack spacing={4} align="stretch">
+                {section.elements.map((element, elementIndex) => (
+                  <SortableItem 
+                    key={element.id} 
+                    element={element} 
+                    sectionIndex={sectionIndex} 
+                    elementIndex={elementIndex} 
+                  />
+                ))}
+              </VStack>
+            </SortableContext>
+          </Box>
+        </Collapse>
+      </Box>
+    );
+  };
+
   return (
     <Box maxWidth="800px" margin="auto" p={4}>
       <DndContext 
@@ -410,101 +550,18 @@ const FormBuilderPage = () => {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        {formSections.map((section, sectionIndex) => (
-          <Box 
-            key={section.id}
-            bg="white" 
-            borderRadius="md" 
-            boxShadow="sm" 
-            mb={4} 
-            overflow="visible"
-            position="relative"
-          >
-            <Flex 
-              justify="space-between" 
-              align="center" 
-              p={4} 
-              borderBottomWidth={section.isOpen ? "1px" : "0"}
-              borderBottomColor="gray.200"
-              position="relative"
-              _hover={{
-                "& > .section-actions": {
-                  opacity: 1,
-                }
-              }}
-            >
-              <Flex align="center" onClick={() => {
-                const newSections = [...formSections];
-                newSections[sectionIndex].isOpen = !newSections[sectionIndex].isOpen;
-                setFormSections(newSections);
-              }} cursor="pointer" flex={1}>
-                <Heading size="md">Section {sectionIndex + 1}</Heading>
-                <IconButton
-                  icon={section.isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
-                  variant="ghost"
-                  aria-label={section.isOpen ? "Collapse section" : "Expand section"}
-                  ml={2}
-                />
-              </Flex>
-              <Flex 
-                className="section-actions"
-                opacity={0}
-                transition="opacity 0.2s"
-                position="absolute"
-                right={4}
-                top="50%"
-                transform="translateY(-50%)"
-              >
-                <IconButton
-                  icon={<MdContentCopy />}
-                  aria-label="Duplicate Section"
-                  variant="ghost"
-                  size="sm"
-                  mr={1}
-                  onClick={() => duplicateSection(sectionIndex)}
-                />
-                {formSections.length > 1 && (
-                  <IconButton
-                    icon={<AiOutlineDelete />}  // Changed to AiOutlineDelete
-                    aria-label="Delete Section"
-                    variant="ghost"
-                    size="sm"
-                    mr={1}
-                    onClick={() => deleteSection(sectionIndex)}
-                  />
-                )}
-                {renderMenuItems(menuItems, sectionIndex, -1)}
-                <IconButton
-                  icon={<DragHandleIcon />}
-                  aria-label="Drag Section"
-                  variant="ghost"
-                  size="sm"
-                  cursor="grab"
-                  // Add drag section functionality here
-                />
-              </Flex>
-            </Flex>
-            <Collapse in={section.isOpen}>
-              <Box p={4}>
-                <SortableContext 
-                  items={section.elements.map(element => element.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <VStack spacing={4} align="stretch">
-                    {section.elements.map((element, elementIndex) => (
-                      <SortableItem 
-                        key={element.id} 
-                        element={element} 
-                        sectionIndex={sectionIndex} 
-                        elementIndex={elementIndex} 
-                      />
-                    ))}
-                  </VStack>
-                </SortableContext>
-              </Box>
-            </Collapse>
-          </Box>
-        ))}
+        <SortableContext 
+          items={formSections.map(section => section.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          {formSections.map((section, sectionIndex) => (
+            <SortableSection
+              key={section.id}
+              section={section}
+              sectionIndex={sectionIndex}
+            />
+          ))}
+        </SortableContext>
         <DragOverlay>
           {activeId ? (
             <Box
@@ -516,7 +573,9 @@ const FormBuilderPage = () => {
               borderColor="gray.200"
             >
               <Text fontWeight="bold">
-                {formSections.flatMap(s => s.elements).find(e => e.id === activeId)?.type}
+                {formSections.find(s => s.id === activeId) 
+                  ? `Section ${formSections.findIndex(s => s.id === activeId) + 1}`
+                  : formSections.flatMap(s => s.elements).find(e => e.id === activeId)?.type}
               </Text>
             </Box>
           ) : null}
