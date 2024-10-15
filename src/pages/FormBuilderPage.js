@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Box,
   VStack,
@@ -17,6 +17,19 @@ import {
   Portal,
   MenuGroup,
   MenuDivider,
+  Button,
+  InputGroup,
+  InputLeftElement,
+  Checkbox,
+  Radio,
+  RadioGroup,
+  Stack,
+  Select,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
 } from '@chakra-ui/react';
 import { AddIcon, ChevronDownIcon, ChevronUpIcon, DragHandleIcon, SearchIcon } from '@chakra-ui/icons';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
@@ -26,12 +39,13 @@ import {
   MdEmail, MdPhone, MdLocationOn, MdDateRange, MdImage, MdCloudUpload,
   MdGesture, MdAttachFile
 } from 'react-icons/md';
-import { HiDocumentAdd, HiViewBoards } from 'react-icons/hi';
+import { HiViewBoards } from 'react-icons/hi';
 import { FaHashtag } from 'react-icons/fa';
 
 const FormBuilderPage = () => {
   const [formElements, setFormElements] = useState([]);
   const [isOpen, setIsOpen] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure();
 
   const addElement = (elementType, index) => {
@@ -51,7 +65,6 @@ const FormBuilderPage = () => {
 
   const menuItems = [
     { group: 'Blocks', items: [
-      { icon: HiDocumentAdd, label: 'Add page' },
       { icon: HiViewBoards, label: 'Add Section' },
     ]},
     { group: 'Text', items: [
@@ -88,6 +101,17 @@ const FormBuilderPage = () => {
     ]},
   ];
 
+  const handleSearch = useCallback((e) => {
+    setSearchQuery(e.target.value);
+  }, []);
+
+  const filteredMenuItems = menuItems.map(group => ({
+    ...group,
+    items: group.items.filter(item =>
+      item.label.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  })).filter(group => group.items.length > 0);
+
   const renderMenuItems = (items, index) => (
     <Menu key={index}>
       <MenuButton
@@ -98,12 +122,33 @@ const FormBuilderPage = () => {
         size="sm"
       />
       <Portal>
-        <MenuList maxHeight="400px" overflowY="auto">
-          <MenuItem icon={<SearchIcon />} closeOnSelect={false}>
-            <Input placeholder="Search element" size="sm" />
-          </MenuItem>
+        <MenuList maxHeight="400px" overflowY="auto" css={{
+          '&::-webkit-scrollbar': {
+            width: '4px',
+          },
+          '&::-webkit-scrollbar-track': {
+            width: '6px',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            background: 'gray.300',
+            borderRadius: '24px',
+          },
+        }}>
+          <Box px={4} py={2}>
+            <InputGroup size="sm">
+              <InputLeftElement pointerEvents="none">
+                <SearchIcon color="gray.300" />
+              </InputLeftElement>
+              <Input
+                placeholder="Search element"
+                value={searchQuery}
+                onChange={handleSearch}
+                borderRadius="md"
+              />
+            </InputGroup>
+          </Box>
           <MenuDivider />
-          {menuItems.map((group, groupIndex) => (
+          {filteredMenuItems.map((group, groupIndex) => (
             <MenuGroup key={groupIndex} title={group.group}>
               {group.items.map((item, itemIndex) => (
                 <MenuItem 
@@ -114,7 +159,7 @@ const FormBuilderPage = () => {
                   {item.label}
                 </MenuItem>
               ))}
-              {groupIndex < menuItems.length - 1 && <MenuDivider />}
+              {groupIndex < filteredMenuItems.length - 1 && <MenuDivider />}
             </MenuGroup>
           ))}
         </MenuList>
@@ -124,18 +169,104 @@ const FormBuilderPage = () => {
 
   const renderFormElement = (element) => {
     switch (element.type) {
-      case 'File upload':
+      case 'Heading':
+        return <Heading size="md">Sample Heading</Heading>;
+      case 'Paragraph':
+        return <Text>This is a sample paragraph. Replace with your content.</Text>;
+      case 'Short answer':
+        return <Input placeholder="Short answer" />;
+      case 'Long answer':
+        return <Textarea placeholder="Write your long text here." />;
+      case 'Multiple text fields':
+        return (
+          <VStack align="stretch">
+            <Input placeholder="Field 1" />
+            <Input placeholder="Field 2" />
+            <Input placeholder="Field 3" />
+          </VStack>
+        );
+      case 'Configurable list':
+        return (
+          <VStack align="stretch">
+            <Input placeholder="List item 1" />
+            <Input placeholder="List item 2" />
+            <Button size="sm">Add item</Button>
+          </VStack>
+        );
+      case 'Single select':
+        return (
+          <RadioGroup>
+            <Stack>
+              <Radio value="1">Option 1</Radio>
+              <Radio value="2">Option 2</Radio>
+              <Radio value="3">Option 3</Radio>
+            </Stack>
+          </RadioGroup>
+        );
+      case 'Multi select':
+        return (
+          <VStack align="stretch">
+            <Checkbox>Option 1</Checkbox>
+            <Checkbox>Option 2</Checkbox>
+            <Checkbox>Option 3</Checkbox>
+          </VStack>
+        );
+      case 'Checkbox':
+        return <Checkbox>Checkbox label</Checkbox>;
+      case 'Dropdown':
+        return (
+          <Select placeholder="Select option">
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+          </Select>
+        );
+      case 'Slider':
+        return <Input type="range" />;
+      case 'Number':
+        return (
+          <NumberInput>
+            <NumberInputField />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
+        );
+      case 'Email input':
+        return <Input type="email" placeholder="Enter email" />;
+      case 'Phone number':
+        return <Input type="tel" placeholder="Enter phone number" />;
+      case 'Address':
+        return (
+          <VStack align="stretch">
+            <Input placeholder="Street address" />
+            <Input placeholder="City" />
+            <Input placeholder="State/Province" />
+            <Input placeholder="ZIP/Postal code" />
+          </VStack>
+        );
+      case 'Date / time picker':
+        return <Input type="datetime-local" />;
+      case 'Media':
+        return <Input type="file" accept="image/*,video/*" />;
+      case 'File uploader':
         return (
           <Box borderWidth="1px" borderStyle="dashed" borderRadius="md" p={4} bg="white">
             <Flex justify="center" align="center" direction="column" h="100px">
               <AddIcon mb={2} />
-              <Text fontSize="sm" color="gray.500">Size limit: 10 MB</Text>
+              <Text fontSize="sm" color="gray.500">Click to upload or drag and drop</Text>
             </Flex>
-            <Text fontSize="xs" color="gray.400" mt={2}>.doc, .docx, .txt, .rtf, .odt, .ppt, .pptx, .odp, .ods, .csv, .xls, .xlsx, .numbers|.json, .xml, .zip, .rar, .mp3, .wav, .aiff, .aac, .pdf</Text>
           </Box>
         );
-      case 'Long answer':
-        return <Textarea placeholder="Write your long text here." />;
+      case 'Location':
+        return <Input placeholder="Enter location" />;
+      case 'Signature':
+        return (
+          <Box borderWidth="1px" borderRadius="md" p={4} bg="gray.50">
+            <Text fontSize="sm" color="gray.500">Signature pad placeholder</Text>
+          </Box>
+        );
       default:
         return <Input placeholder={`${element.type} placeholder`} />;
     }
