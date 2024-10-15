@@ -30,37 +30,57 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
 } from '@chakra-ui/react';
 import { AddIcon, ChevronDownIcon, ChevronUpIcon, DragHandleIcon, SearchIcon } from '@chakra-ui/icons';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { 
-  MdTextFields, MdShortText, MdSubject, MdFormatListBulleted, 
+  MdTextFields, MdShortText, MdSubject, 
   MdCheckBox, MdArrowDropDownCircle, MdLinearScale,
-  MdEmail, MdPhone, MdLocationOn, MdDateRange, MdImage, MdCloudUpload,
-  MdGesture, MdAttachFile
+  MdEmail, MdPhone, MdDateRange, MdImage, MdCloudUpload,
 } from 'react-icons/md';
 import { HiViewBoards } from 'react-icons/hi';
 import { FaHashtag } from 'react-icons/fa';
 
 const FormBuilderPage = () => {
-  const [formElements, setFormElements] = useState([]);
-  const [isOpen, setIsOpen] = useState(true);
+  const [formSections, setFormSections] = useState([{ id: 'section-1', isOpen: true, elements: [] }]);
   const [searchQuery, setSearchQuery] = useState('');
   const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure();
 
-  const addElement = (elementType, index) => {
-    const newElements = [...formElements];
-    newElements.splice(index + 1, 0, { type: elementType, id: Date.now().toString() });
-    setFormElements(newElements);
+  const addElement = (elementType, sectionIndex, elementIndex) => {
+    const newSections = [...formSections];
+    if (elementType === 'Add Section') {
+      const newSection = { id: `section-${Date.now()}`, isOpen: true, elements: [] };
+      newSections.splice(sectionIndex + 1, 0, newSection);
+    } else {
+      const newElement = { type: elementType, id: Date.now().toString() };
+      newSections[sectionIndex].elements.splice(elementIndex + 1, 0, newElement);
+      newSections[sectionIndex].isOpen = true; // Automatically open the section
+    }
+    setFormSections(newSections);
     onMenuClose();
   };
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
-    const items = Array.from(formElements);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-    setFormElements(items);
+    const { source, destination } = result;
+    const newSections = [...formSections];
+
+    if (source.droppableId === destination.droppableId) {
+      const sectionIndex = formSections.findIndex(section => section.id === source.droppableId);
+      const [reorderedItem] = newSections[sectionIndex].elements.splice(source.index, 1);
+      newSections[sectionIndex].elements.splice(destination.index, 0, reorderedItem);
+    } else {
+      const sourceSectionIndex = formSections.findIndex(section => section.id === source.droppableId);
+      const destSectionIndex = formSections.findIndex(section => section.id === destination.droppableId);
+      const [movedItem] = newSections[sourceSectionIndex].elements.splice(source.index, 1);
+      newSections[destSectionIndex].elements.splice(destination.index, 0, movedItem);
+    }
+
+    setFormSections(newSections);
   };
 
   const menuItems = [
@@ -68,12 +88,8 @@ const FormBuilderPage = () => {
       { icon: HiViewBoards, label: 'Add Section' },
     ]},
     { group: 'Text', items: [
-      { icon: MdTextFields, label: 'Heading' },
-      { icon: MdSubject, label: 'Paragraph' },
       { icon: MdShortText, label: 'Short answer' },
       { icon: MdSubject, label: 'Long answer' },
-      { icon: MdFormatListBulleted, label: 'Multiple text fields' },
-      { icon: MdFormatListBulleted, label: 'Configurable list' },
     ]},
     { group: 'Choices', items: [
       { icon: MdCheckBox, label: 'Single select' },
@@ -88,16 +104,11 @@ const FormBuilderPage = () => {
     { group: 'Contact info', items: [
       { icon: MdEmail, label: 'Email input' },
       { icon: MdPhone, label: 'Phone number' },
-      { icon: MdLocationOn, label: 'Address' },
       { icon: MdDateRange, label: 'Date / time picker' },
     ]},
     { group: 'Uploads', items: [
       { icon: MdImage, label: 'Media' },
       { icon: MdCloudUpload, label: 'File uploader' },
-    ]},
-    { group: 'Miscellaneous', items: [
-      { icon: MdLocationOn, label: 'Location' },
-      { icon: MdGesture, label: 'Signature' },
     ]},
   ];
 
@@ -112,8 +123,8 @@ const FormBuilderPage = () => {
     )
   })).filter(group => group.items.length > 0);
 
-  const renderMenuItems = (items, index) => (
-    <Menu key={index}>
+  const renderMenuItems = (items, sectionIndex, elementIndex) => (
+    <Menu key={elementIndex}>
       <MenuButton
         as={IconButton}
         icon={<AddIcon />}
@@ -154,7 +165,7 @@ const FormBuilderPage = () => {
                 <MenuItem 
                   key={itemIndex} 
                   icon={<item.icon />} 
-                  onClick={() => addElement(item.label, index)}
+                  onClick={() => addElement(item.label, sectionIndex, elementIndex)}
                 >
                   {item.label}
                 </MenuItem>
@@ -169,30 +180,10 @@ const FormBuilderPage = () => {
 
   const renderFormElement = (element) => {
     switch (element.type) {
-      case 'Heading':
-        return <Heading size="md">Sample Heading</Heading>;
-      case 'Paragraph':
-        return <Text>This is a sample paragraph. Replace with your content.</Text>;
       case 'Short answer':
         return <Input placeholder="Short answer" />;
       case 'Long answer':
-        return <Textarea placeholder="Write your long text here." />;
-      case 'Multiple text fields':
-        return (
-          <VStack align="stretch">
-            <Input placeholder="Field 1" />
-            <Input placeholder="Field 2" />
-            <Input placeholder="Field 3" />
-          </VStack>
-        );
-      case 'Configurable list':
-        return (
-          <VStack align="stretch">
-            <Input placeholder="List item 1" />
-            <Input placeholder="List item 2" />
-            <Button size="sm">Add item</Button>
-          </VStack>
-        );
+        return <Textarea placeholder="Long answer" />;
       case 'Single select':
         return (
           <RadioGroup>
@@ -205,7 +196,7 @@ const FormBuilderPage = () => {
         );
       case 'Multi select':
         return (
-          <VStack align="stretch">
+          <VStack align="start">
             <Checkbox>Option 1</Checkbox>
             <Checkbox>Option 2</Checkbox>
             <Checkbox>Option 3</Checkbox>
@@ -222,7 +213,14 @@ const FormBuilderPage = () => {
           </Select>
         );
       case 'Slider':
-        return <Input type="range" />;
+        return (
+          <Slider aria-label="slider-example" defaultValue={30}>
+            <SliderTrack>
+              <SliderFilledTrack />
+            </SliderTrack>
+            <SliderThumb />
+          </Slider>
+        );
       case 'Number':
         return (
           <NumberInput>
@@ -237,19 +235,9 @@ const FormBuilderPage = () => {
         return <Input type="email" placeholder="Enter email" />;
       case 'Phone number':
         return <Input type="tel" placeholder="Enter phone number" />;
-      case 'Address':
-        return (
-          <VStack align="stretch">
-            <Input placeholder="Street address" />
-            <Input placeholder="City" />
-            <Input placeholder="State/Province" />
-            <Input placeholder="ZIP/Postal code" />
-          </VStack>
-        );
       case 'Date / time picker':
         return <Input type="datetime-local" />;
       case 'Media':
-        return <Input type="file" accept="image/*,video/*" />;
       case 'File uploader':
         return (
           <Box borderWidth="1px" borderStyle="dashed" borderRadius="md" p={4} bg="white">
@@ -259,14 +247,6 @@ const FormBuilderPage = () => {
             </Flex>
           </Box>
         );
-      case 'Location':
-        return <Input placeholder="Enter location" />;
-      case 'Signature':
-        return (
-          <Box borderWidth="1px" borderRadius="md" p={4} bg="gray.50">
-            <Text fontSize="sm" color="gray.500">Signature pad placeholder</Text>
-          </Box>
-        );
       default:
         return <Input placeholder={`${element.type} placeholder`} />;
     }
@@ -274,114 +254,121 @@ const FormBuilderPage = () => {
 
   return (
     <Box maxWidth="800px" margin="auto" p={4}>
-      <Box 
-        bg="white" 
-        borderRadius="md" 
-        boxShadow="sm" 
-        mb={4} 
-        overflow="visible"
-        position="relative"
-      >
-        <Flex 
-          justify="space-between" 
-          align="center" 
-          p={4} 
-          borderBottomWidth={isOpen ? "1px" : "0"}
-          borderBottomColor="gray.200"
-          position="relative"
-          _hover={{
-            "& > .section-actions": {
-              opacity: 1,
-            }
-          }}
-        >
-          <Flex align="center" onClick={() => setIsOpen(!isOpen)} cursor="pointer" flex={1}>
-            <Heading size="md">Section</Heading>
-            <IconButton
-              icon={isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
-              variant="ghost"
-              aria-label={isOpen ? "Collapse section" : "Expand section"}
-              ml={2}
-            />
-          </Flex>
-          <Flex 
-            className="section-actions"
-            opacity={0}
-            transition="opacity 0.2s"
-            position="absolute"
-            right={4}
-            top="50%"
-            transform="translateY(-50%)"
+      <DragDropContext onDragEnd={onDragEnd}>
+        {formSections.map((section, sectionIndex) => (
+          <Box 
+            key={section.id}
+            bg="white" 
+            borderRadius="md" 
+            boxShadow="sm" 
+            mb={4} 
+            overflow="visible"
+            position="relative"
           >
-            {renderMenuItems(menuItems, -1)}
-          </Flex>
-        </Flex>
-        <Collapse in={isOpen}>
-          <Box p={4}>
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="form-elements">
-                {(provided) => (
-                  <VStack
-                    spacing={4}
-                    align="stretch"
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                  >
-                    {formElements.map((element, index) => (
-                      <Draggable key={element.id} draggableId={element.id} index={index}>
-                        {(provided, snapshot) => (
-                          <Box
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            bg="white"
-                            p={4}
-                            borderRadius="md"
-                            boxShadow="sm"
-                            borderWidth="1px"
-                            borderColor="gray.200"
-                            position="relative"
-                            _hover={{
-                              "& > .element-actions": {
-                                opacity: 1,
-                              }
-                            }}
-                          >
-                            <Flex justify="space-between" align="center" mb={2}>
-                              <Flex align="center">
-                                <Text fontWeight="bold">{element.type}</Text>
-                              </Flex>
-                            </Flex>
-                            {renderFormElement(element)}
-                            <Flex 
-                              className="element-actions"
-                              position="absolute"
-                              top={2}
-                              right={2}
-                              opacity={0}
-                              transition="opacity 0.2s"
+            <Flex 
+              justify="space-between" 
+              align="center" 
+              p={4} 
+              borderBottomWidth={section.isOpen ? "1px" : "0"}
+              borderBottomColor="gray.200"
+              position="relative"
+              _hover={{
+                "& > .section-actions": {
+                  opacity: 1,
+                }
+              }}
+            >
+              <Flex align="center" onClick={() => {
+                const newSections = [...formSections];
+                newSections[sectionIndex].isOpen = !newSections[sectionIndex].isOpen;
+                setFormSections(newSections);
+              }} cursor="pointer" flex={1}>
+                <Heading size="md">Section {sectionIndex + 1}</Heading>
+                <IconButton
+                  icon={section.isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                  variant="ghost"
+                  aria-label={section.isOpen ? "Collapse section" : "Expand section"}
+                  ml={2}
+                />
+              </Flex>
+              <Flex 
+                className="section-actions"
+                opacity={0}
+                transition="opacity 0.2s"
+                position="absolute"
+                right={4}
+                top="50%"
+                transform="translateY(-50%)"
+              >
+                {renderMenuItems(menuItems, sectionIndex, -1)}
+              </Flex>
+            </Flex>
+            <Collapse in={section.isOpen}>
+              <Box p={4}>
+                <Droppable droppableId={section.id}>
+                  {(provided) => (
+                    <VStack
+                      spacing={4}
+                      align="stretch"
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                    >
+                      {section.elements.map((element, elementIndex) => (
+                        <Draggable key={element.id} draggableId={element.id} index={elementIndex}>
+                          {(provided, snapshot) => (
+                            <Box
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              bg="white"
+                              p={4}
+                              borderRadius="md"
+                              boxShadow="sm"
+                              borderWidth="1px"
+                              borderColor="gray.200"
+                              position="relative"
+                              _hover={{
+                                "& > .element-actions": {
+                                  opacity: 1,
+                                }
+                              }}
                             >
-                              <IconButton
-                                {...provided.dragHandleProps}
-                                icon={<DragHandleIcon />}
-                                aria-label="Drag"
-                                variant="ghost"
-                                size="sm"
-                                mr={1}
-                              />
-                              {renderMenuItems(menuItems, index)}
-                            </Flex>
-                          </Box>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </VStack>
-                )}
-              </Droppable>
-            </DragDropContext>
+                              <Flex justify="space-between" align="center" mb={2}>
+                                <Flex align="center">
+                                  <Text fontWeight="bold">{element.type}</Text>
+                                </Flex>
+                              </Flex>
+                              {renderFormElement(element)}
+                              <Flex 
+                                className="element-actions"
+                                position="absolute"
+                                top={2}
+                                right={2}
+                                opacity={0}
+                                transition="opacity 0.2s"
+                              >
+                                <IconButton
+                                  {...provided.dragHandleProps}
+                                  icon={<DragHandleIcon />}
+                                  aria-label="Drag"
+                                  variant="ghost"
+                                  size="sm"
+                                  mr={1}
+                                />
+                                {renderMenuItems(menuItems, sectionIndex, elementIndex)}
+                              </Flex>
+                            </Box>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </VStack>
+                  )}
+                </Droppable>
+              </Box>
+            </Collapse>
           </Box>
-        </Collapse>
-      </Box>
+        ))}
+      </DragDropContext>
     </Box>
   );
 };
