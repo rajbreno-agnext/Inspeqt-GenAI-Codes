@@ -35,22 +35,25 @@ import {
   SliderFilledTrack,
   SliderThumb,
 } from '@chakra-ui/react';
-import { AddIcon, ChevronDownIcon, ChevronUpIcon, DragHandleIcon, SearchIcon } from '@chakra-ui/icons';
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { AddIcon, ChevronDownIcon, ChevronUpIcon, DragHandleIcon, SearchIcon, CopyIcon, DeleteIcon } from '@chakra-ui/icons';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { 
   MdTextFields, MdShortText, MdSubject, 
   MdCheckBox, MdArrowDropDownCircle, MdLinearScale,
   MdEmail, MdPhone, MdDateRange, MdImage, MdCloudUpload,
+  MdContentCopy, MdDelete
 } from 'react-icons/md';
 import { HiViewBoards } from 'react-icons/hi';
 import { FaHashtag } from 'react-icons/fa';
+import { AiOutlineDelete } from 'react-icons/ai';
 
 const FormBuilderPage = () => {
   const [formSections, setFormSections] = useState([{ id: 'section-1', isOpen: true, elements: [] }]);
   const [searchQuery, setSearchQuery] = useState('');
   const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure();
+  const [activeId, setActiveId] = useState(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -73,33 +76,85 @@ const FormBuilderPage = () => {
     onMenuClose();
   };
 
+  const handleDragStart = (event) => {
+    const { active } = event;
+    setActiveId(active.id);
+  };
+
   const handleDragEnd = (event) => {
     const { active, over } = event;
 
     if (active.id !== over.id) {
       setFormSections((sections) => {
-        const oldIndex = sections.findIndex((section) => 
+        let oldSectionIndex = sections.findIndex((section) => 
           section.elements.some((element) => element.id === active.id)
         );
-        const newIndex = sections.findIndex((section) => 
-          section.elements.some((element) => element.id === over.id)
+        let newSectionIndex = sections.findIndex((section) => 
+          section.id === over.id || section.elements.some((element) => element.id === over.id)
         );
+
+        // If dropping onto a section
+        if (sections[newSectionIndex] && !sections[newSectionIndex].elements.some(e => e.id === over.id)) {
+          const [movedItem] = sections[oldSectionIndex].elements.splice(
+            sections[oldSectionIndex].elements.findIndex(e => e.id === active.id),
+            1
+          );
+          sections[newSectionIndex].elements.push(movedItem);
+          return [...sections];
+        }
+
+        // If dropping between elements
+        const oldElementIndex = sections[oldSectionIndex].elements.findIndex((element) => element.id === active.id);
+        const newElementIndex = sections[newSectionIndex].elements.findIndex((element) => element.id === over.id);
 
         const updatedSections = [...sections];
-        const [movedItem] = updatedSections[oldIndex].elements.splice(
-          updatedSections[oldIndex].elements.findIndex((element) => element.id === active.id),
-          1
-        );
+        const [movedItem] = updatedSections[oldSectionIndex].elements.splice(oldElementIndex, 1);
 
-        updatedSections[newIndex].elements.splice(
-          updatedSections[newIndex].elements.findIndex((element) => element.id === over.id),
-          0,
-          movedItem
-        );
+        if (oldSectionIndex === newSectionIndex) {
+          updatedSections[newSectionIndex].elements.splice(newElementIndex, 0, movedItem);
+        } else {
+          updatedSections[newSectionIndex].elements.splice(newElementIndex, 0, movedItem);
+          updatedSections[newSectionIndex].isOpen = true;
+        }
 
         return updatedSections;
       });
     }
+    setActiveId(null);
+  };
+
+  const duplicateElement = (sectionIndex, elementIndex) => {
+    setFormSections(sections => {
+      const newSections = [...sections];
+      const elementToDuplicate = { ...newSections[sectionIndex].elements[elementIndex], id: Date.now().toString() };
+      newSections[sectionIndex].elements.splice(elementIndex + 1, 0, elementToDuplicate);
+      return newSections;
+    });
+  };
+
+  const deleteElement = (sectionIndex, elementIndex) => {
+    setFormSections(sections => {
+      const newSections = [...sections];
+      newSections[sectionIndex].elements.splice(elementIndex, 1);
+      return newSections;
+    });
+  };
+
+  const duplicateSection = (sectionIndex) => {
+    setFormSections(sections => {
+      const newSections = [...sections];
+      const sectionToDuplicate = { ...newSections[sectionIndex], id: `section-${Date.now()}` };
+      newSections.splice(sectionIndex + 1, 0, sectionToDuplicate);
+      return newSections;
+    });
+  };
+
+  const deleteSection = (sectionIndex) => {
+    setFormSections(sections => {
+      const newSections = [...sections];
+      newSections.splice(sectionIndex, 1);
+      return newSections;
+    });
   };
 
   const menuItems = [
@@ -289,7 +344,6 @@ const FormBuilderPage = () => {
       <Box
         ref={setNodeRef}
         style={style}
-        {...attributes}
         bg="white"
         p={4}
         borderRadius="md"
@@ -318,14 +372,31 @@ const FormBuilderPage = () => {
           transition="opacity 0.2s"
         >
           <IconButton
+            icon={<MdContentCopy />}
+            aria-label="Duplicate"
+            variant="ghost"
+            size="sm"
+            mr={1}
+            onClick={() => duplicateElement(sectionIndex, elementIndex)}
+          />
+          <IconButton
+            icon={<AiOutlineDelete />}  // Changed to AiOutlineDelete
+            aria-label="Delete"
+            variant="ghost"
+            size="sm"
+            mr={1}
+            onClick={() => deleteElement(sectionIndex, elementIndex)}
+          />
+          {renderMenuItems(menuItems, sectionIndex, elementIndex)}
+          <IconButton
+            {...attributes}
             {...listeners}
             icon={<DragHandleIcon />}
             aria-label="Drag"
             variant="ghost"
             size="sm"
-            mr={1}
+            cursor="grab"
           />
-          {renderMenuItems(menuItems, sectionIndex, elementIndex)}
         </Flex>
       </Box>
     );
@@ -336,6 +407,7 @@ const FormBuilderPage = () => {
       <DndContext 
         sensors={sensors}
         collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
         {formSections.map((section, sectionIndex) => (
@@ -383,7 +455,33 @@ const FormBuilderPage = () => {
                 top="50%"
                 transform="translateY(-50%)"
               >
+                <IconButton
+                  icon={<MdContentCopy />}
+                  aria-label="Duplicate Section"
+                  variant="ghost"
+                  size="sm"
+                  mr={1}
+                  onClick={() => duplicateSection(sectionIndex)}
+                />
+                {formSections.length > 1 && (
+                  <IconButton
+                    icon={<AiOutlineDelete />}  // Changed to AiOutlineDelete
+                    aria-label="Delete Section"
+                    variant="ghost"
+                    size="sm"
+                    mr={1}
+                    onClick={() => deleteSection(sectionIndex)}
+                  />
+                )}
                 {renderMenuItems(menuItems, sectionIndex, -1)}
+                <IconButton
+                  icon={<DragHandleIcon />}
+                  aria-label="Drag Section"
+                  variant="ghost"
+                  size="sm"
+                  cursor="grab"
+                  // Add drag section functionality here
+                />
               </Flex>
             </Flex>
             <Collapse in={section.isOpen}>
@@ -407,6 +505,22 @@ const FormBuilderPage = () => {
             </Collapse>
           </Box>
         ))}
+        <DragOverlay>
+          {activeId ? (
+            <Box
+              bg="white"
+              p={4}
+              borderRadius="md"
+              boxShadow="lg"
+              borderWidth="1px"
+              borderColor="gray.200"
+            >
+              <Text fontWeight="bold">
+                {formSections.flatMap(s => s.elements).find(e => e.id === activeId)?.type}
+              </Text>
+            </Box>
+          ) : null}
+        </DragOverlay>
       </DndContext>
     </Box>
   );
