@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 const navigationButtons = [
   { name: 'Dashboard', path: '/dashboard' },
   { name: 'Create Job', path: '/create-job' },
+  { name: 'Sidebar Preview', path: '/sidebar' },
   // Add more navigation buttons here as needed
 ];
 
@@ -21,9 +22,9 @@ const HomePage = () => {
   );
 
   return (
-    <Box maxWidth="400px" margin="auto" px={4} py={8}>
+    <Box maxWidth="500px" margin="auto" px={4} py={8}>
       <VStack spacing={8} align="stretch">
-        <Heading as="h1" size="xl" textAlign="center">
+        <Heading as="h1" size="lg" textAlign="center" color="brand.700">
           Navigate Inspeqt Page
         </Heading>
         <Input 
@@ -31,6 +32,7 @@ const HomePage = () => {
           value={searchQuery}
           onChange={handleSearch}
           size="lg"
+          focusBorderColor="brand.400"
         />
         <Text textAlign="center" color="gray.500">
           Search for pages or select from the options below
@@ -39,7 +41,7 @@ const HomePage = () => {
           {filteredButtons.map((button, index) => (
             <Button
               key={index}
-              colorScheme="teal"
+              colorScheme="brand"
               size="lg"
               width="100%"
               onClick={() => navigate(button.path)}
