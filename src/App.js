@@ -9,6 +9,7 @@ import DashboardPage from './pages/DashboardPage';
 import CreateJobPage from './pages/CreateJobPage';
 import SidebarPreviewPage from './pages/SidebarPreviewPage';
 import FormBuilderPage from './pages/FormBuilderPage';
+import BulkLocationUploadModal from './pages/BulkLocationUploadModal';
 import theme from './theme'; // Import your custom theme
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
             <Route path="/create-job" element={<CreateJobPage />} />
             <Route path="/sidebar" element={<SidebarPreviewPage />} />
             <Route path="/form-builder" element={<FormBuilderPage />} />
+            <Route path="/custom-code" element={<BulkLocationUploadModal />} />
           </Routes>
         </Box>
       </Router>

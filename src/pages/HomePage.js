@@ -7,6 +7,7 @@ const navigationButtons = [
   { name: 'Create Job', path: '/create-job' },
   { name: 'Sidebar Preview', path: '/sidebar' },
   { name: 'Form Builder', path: '/form-builder' },
+  { name: 'Bulk Location Upload', path: '/custom-code' },
   // Add more navigation buttons here as needed
 ];
 
