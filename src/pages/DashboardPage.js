@@ -14,6 +14,7 @@ import { RiHome5Line, RiFileList3Line, RiUser3Line } from 'react-icons/ri';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { useNavigate } from 'react-router-dom';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -43,6 +44,8 @@ const DashboardPage = () => {
       },
     },
   };
+
+  const navigate = useNavigate();
 
   return (
     <Box bg="gray.50" minHeight="100vh" maxWidth="400px" margin="0 auto">
@@ -172,8 +175,16 @@ const DashboardPage = () => {
             variant="ghost"
             aria-label="Account"
             color="gray.500"
+            onClick={() => navigate('/accounts')}
           />
-          <Text fontSize="xs" color="gray.500">Account</Text>
+          <Text 
+            fontSize="xs" 
+            color="gray.500"
+            onClick={() => navigate('/accounts')}
+            cursor="pointer"
+          >
+            Account
+          </Text>
         </VStack>
       </Flex>
     </Box>

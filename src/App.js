@@ -14,6 +14,7 @@ import LoginPage from './pages/LoginPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import OtpPage from './pages/OtpPage';
 import NewPasswordPage from './pages/NewPasswordPage';
+import AccountPage from './pages/AccountPage';
 import theme from './theme';
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/otp" element={<OtpPage />} />
             <Route path="/new-password" element={<NewPasswordPage />} />
+            <Route path="/accounts" element={<AccountPage />} />
           </Routes>
         </Box>
       </Router>

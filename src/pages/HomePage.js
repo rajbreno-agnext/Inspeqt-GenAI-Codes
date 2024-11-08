@@ -9,6 +9,10 @@ const navigationButtons = [
   { name: 'Form Builder', path: '/form-builder' },
   { name: 'Bulk Location Upload', path: '/custom-code' },
   { name: 'Login', path: '/login' },
+  { name: 'Forgot Password', path: '/forgot-password' },
+  { name: 'OTP Verification', path: '/otp' },
+  { name: 'New Password', path: '/new-password' },
+  { name: 'Account', path: '/accounts' },
   // Add more navigation buttons here as needed
 ];
 
