@@ -10,13 +10,17 @@ import CreateJobPage from './pages/CreateJobPage';
 import SidebarPreviewPage from './pages/SidebarPreviewPage';
 import FormBuilderPage from './pages/FormBuilderPage';
 import BulkLocationUploadModal from './pages/BulkLocationUploadModal';
-import theme from './theme'; // Import your custom theme
+import LoginPage from './pages/LoginPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import OtpPage from './pages/OtpPage';
+import NewPasswordPage from './pages/NewPasswordPage';
+import theme from './theme';
 
 function App() {
   return (
-    <ChakraProvider theme={theme}> {/* Apply your custom theme here */}
+    <ChakraProvider theme={theme}>
       <Router>
-        <Box bg="gray.50" minHeight="100vh">
+        <Box minHeight="100vh">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
@@ -24,6 +28,10 @@ function App() {
             <Route path="/sidebar" element={<SidebarPreviewPage />} />
             <Route path="/form-builder" element={<FormBuilderPage />} />
             <Route path="/custom-code" element={<BulkLocationUploadModal />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/otp" element={<OtpPage />} />
+            <Route path="/new-password" element={<NewPasswordPage />} />
           </Routes>
         </Box>
       </Router>
