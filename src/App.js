@@ -10,6 +10,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import OtpPage from './pages/OtpPage';
 import NewPasswordPage from './pages/NewPasswordPage';
 import AccountPage from './pages/AccountPage';
+import DashboardPage from './pages/DashboardPage';
 import theme from './theme';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Box minHeight="100vh">
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/otp" element={<OtpPage />} />
