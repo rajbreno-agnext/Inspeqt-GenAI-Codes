@@ -52,23 +52,14 @@ const DashboardPage = () => {
   ];
 
   return (
-    <Container maxW="400px" p={0} bg="#F4F4F6" minH="100vh">
-      {/* Top Bar - Fixed */}
+    <Container maxW="400px" p={0} bg="#f4f4f669" minH="100vh">
+      {/* Top Bar - No border */}
       <Box 
-        position="fixed"
-        top={0}
-        left={0}
-        right={0}
-        maxW="400px"
-        mx="auto"
         h="56px" 
         px={2}
         display="flex"
         alignItems="center"
-        bg="white"
         zIndex={10}
-        borderBottom="1px solid"
-        borderColor="gray.200"
       >
         <Flex align="center" flex={1}>
           <IconButton
@@ -108,13 +99,13 @@ const DashboardPage = () => {
         </HStack>
       </Box>
 
-      {/* Content with top padding to account for fixed header */}
-      <Box pt="56px">
+      {/* Content no longer needs top padding since header isn't fixed */}
+      <Box>
         {/* Welcome Section */}
-        <VStack px={4} pt={8} pb={4} align="center" spacing={1}>
+        <VStack px={4} pt={8} pb={8} align="center" spacing={1}>
           <Text
             fontSize="28px"
-            fontWeight="500"
+            fontWeight="600"
             color="gray.700"
             lineHeight="36px"
           >
@@ -131,7 +122,7 @@ const DashboardPage = () => {
 
         {/* Main Content */}
         <VStack px={4} spacing={6} pb="80px"> {/* Added bottom padding for navigation bar */}
-          <CompletionScoreCard score={80.3} />
+          <CompletionScoreCard score={70.3} />
           <VStack spacing={3} width="100%">
             {statusItems.map((item, index) => (
               <StatusCard key={index} {...item} />

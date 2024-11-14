@@ -12,7 +12,7 @@ export const StatusCard = ({ title, count, icon, bgColor, iconColor }) => {
   return (
     <Box
       w="full"
-      p={4}
+      p={3}
       bg="white"
       borderRadius="12px"
       borderWidth="1px"

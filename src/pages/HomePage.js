@@ -3,6 +3,7 @@ import { Box, VStack, Input, Button, Heading, Text, Image } from '@chakra-ui/rea
 import { useNavigate } from 'react-router-dom';
 
 const navigationButtons = [
+  { name: 'Dashboard', path: '/dashboard' },
   { name: 'Login', path: '/login' },
   { name: 'Forgot Password', path: '/forgot-password' },
   { name: 'OTP Verification', path: '/otp' },

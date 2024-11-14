@@ -17,12 +17,12 @@ export const CompletionScoreCard = ({ score }) => {
     <Box
       w="full"
       p={5}
-      bg="linear-gradient(135deg, #0A4E18 0%, #166D5D 100%)"
+      bgGradient="linear(135deg, brand.800, brand.600)"
       borderRadius="16px"
       color="white"
       boxShadow="0px 4px 6px -2px rgba(0, 0, 0, 0.05)"
     >
-      <HStack justify="space-between" mb={6}>
+      <HStack justify="space-between" mb={5}>
         <Text fontSize="16px" fontWeight="600">
           Completion Score
         </Text>
