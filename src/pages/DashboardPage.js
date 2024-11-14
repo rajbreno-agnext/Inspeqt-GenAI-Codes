@@ -23,8 +23,11 @@ import {
 } from 'hugeicons-react';
 import { CompletionScoreCard } from '../components/CompletionScoreCard';
 import { StatusCard } from '../components/StatusCard';
+import { useStatusBarColor } from '../hooks/useStatusBarColor';
 
 const DashboardPage = () => {
+  useStatusBarColor("#f4f4f669");
+
   const statusItems = [
     { 
       title: 'Overdue', 

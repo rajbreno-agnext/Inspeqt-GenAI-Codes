@@ -19,9 +19,12 @@ import {
   Location01Icon,
   Calendar02Icon
 } from 'hugeicons-react';
+import { useStatusBarColor } from '../hooks/useStatusBarColor';
 
 const AccountPage = () => {
   const navigate = useNavigate();
+
+  useStatusBarColor("#ffffff");
 
   const userInfo = {
     name: "Amit Singh",

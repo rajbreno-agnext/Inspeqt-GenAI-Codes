@@ -14,10 +14,13 @@ import {
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from 'hugeicons-react';
 import { useNavigate } from 'react-router-dom';
+import { useStatusBarColor } from '../hooks/useStatusBarColor';
 
 const LoginPage = () => {
   const [show, setShow] = React.useState(false);
   const navigate = useNavigate();
+
+  useStatusBarColor("#ffffff");
 
   const handleClick = () => setShow(!show);
 
