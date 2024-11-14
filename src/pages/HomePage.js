@@ -36,7 +36,7 @@ const HomePage = () => {
             borderRadius="12px"
           />
           <Heading as="h1" size="lg" textAlign="center" color="gray.600">
-            Inspeqt App Navigation
+            Inspeqt App
           </Heading>
         </VStack>
         <Text textAlign="center" color="gray.600" fontSize="sm">

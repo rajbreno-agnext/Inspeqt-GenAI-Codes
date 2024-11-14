@@ -27,10 +27,10 @@ const AccountPage = () => {
   useStatusBarColor("#ffffff");
 
   const userInfo = {
-    name: "Amit Singh",
+    name: "Raj Breno",
     role: "Senior Inspector, CSC",
     userId: "AGU0001",
-    email: "amitsingh@agnext.in",
+    email: "rajbreno@agnext.in",
     phone: "+91 698 654 3654",
     address: "C-184, Industrial Area, Sector 75, Sahibzada Ajit Singh Nagar, Punjab 140308",
     joiningDate: "23 May 2023"
@@ -79,7 +79,7 @@ const AccountPage = () => {
         px={2}
       >
         <IconButton
-          icon={<ArrowBackIcon />}
+          icon={<ArrowLeft02Icon />}
           variant="ghost"
           color="gray.600"
           onClick={() => navigate(-1)}
@@ -99,7 +99,7 @@ const AccountPage = () => {
         <Avatar
           size="xl"
           name={userInfo.name}
-          src="https://via.placeholder.com/90x90"
+          src="/user.jpg"
         />
         <VStack align="start" spacing={1}>
           <Text

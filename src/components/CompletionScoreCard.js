@@ -31,6 +31,7 @@ export const CompletionScoreCard = ({ score }) => {
           variant="ghost"
           color="whiteAlpha.800"
           size="sm"
+          _hover={{ bg: 'brand.600' }}
         />
       </HStack>
 
