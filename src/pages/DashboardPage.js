@@ -26,6 +26,17 @@ import { StatusCard } from '../components/StatusCard';
 import { useStatusBarColor } from '../hooks/useStatusBarColor';
 
 const DashboardPage = () => {
+  const [score, setScore] = React.useState(0);
+  
+  React.useEffect(() => {
+    // Increased initial delay slightly for better visual effect
+    const timer = setTimeout(() => {
+      setScore(70.3);
+    }, 800);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   useStatusBarColor("#f4f4f669");
 
   const statusItems = [
@@ -130,7 +141,7 @@ const DashboardPage = () => {
 
         {/* Main Content */}
         <VStack px={4} spacing={6} pb="80px"> {/* Added bottom padding for navigation bar */}
-          <CompletionScoreCard score={70.3} />
+          <CompletionScoreCard score={score} />
           <VStack spacing={3} width="100%" mb={4}>
             {statusItems.map((item, index) => (
               <StatusCard key={index} {...item} />

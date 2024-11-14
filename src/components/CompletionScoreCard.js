@@ -7,6 +7,7 @@ import {
   IconButton,
 } from '@chakra-ui/react';
 import { HiOutlineInformationCircle } from 'react-icons/hi';
+import NumberFlow from '@number-flow/react';
 
 export const CompletionScoreCard = ({ score }) => {
   const radius = 135;
@@ -68,7 +69,7 @@ export const CompletionScoreCard = ({ score }) => {
                 style={{
                   strokeDasharray: circumference,
                   strokeDashoffset: offset,
-                  transition: 'stroke-dashoffset 0.5s ease',
+                  transition: 'stroke-dashoffset 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
                   filter: 'drop-shadow(0px 0px 8px rgba(255, 255, 255, 0.2))',
                 }}
               />
@@ -86,8 +87,31 @@ export const CompletionScoreCard = ({ score }) => {
               fontWeight="700"
               letterSpacing="0.5px"
               mb={-1}
+              sx={{
+                fontVariantNumeric: 'tabular-nums'
+              }}
             >
-              {score}%
+              <NumberFlow
+                value={score}
+                format={{ 
+                  minimumFractionDigits: 1,
+                  maximumFractionDigits: 1
+                }}
+                transformTiming={{ 
+                  duration: 1500,
+                  easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+                }}
+                spinTiming={{
+                  duration: 1500,
+                  easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+                }}
+                opacityTiming={{
+                  duration: 750,
+                  easing: 'ease-out'
+                }}
+                continuous={true}
+                willChange={true}
+              />%
             </Text>
             <Text 
               fontSize="16px"
