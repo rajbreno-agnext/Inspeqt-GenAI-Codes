@@ -103,7 +103,7 @@ const OtpPage = () => {
             placeholder="Enter OTP"
             size="lg"
             borderRadius="12px"
-            borderColor="brand.700"
+            borderColor="gray.300"
             _focus={{
               borderColor: "brand.700",
               boxShadow: "0 0 0 1px"

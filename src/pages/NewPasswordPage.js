@@ -38,7 +38,7 @@ const NewPasswordPage = () => {
       minH="100vh"
       p={4}
       centerContent
-      bg="brand.700"
+      bg="white"
     >
       <Box w="full" position="relative" mt={4}>
         <IconButton
@@ -86,7 +86,7 @@ const NewPasswordPage = () => {
               placeholder="New Password"
               size="lg"
               borderRadius="12px"
-              borderColor="brand.700"
+              borderColor="gray.300"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               _focus={{
@@ -112,7 +112,7 @@ const NewPasswordPage = () => {
               placeholder="Confirm Password"
               size="lg"
               borderRadius="12px"
-              borderColor="brand.700"
+              borderColor="gray.300"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               _focus={{
