@@ -84,6 +84,7 @@ export const CompletionScoreCard = ({ score }) => {
               fontSize="30px"
               fontWeight="700"
               letterSpacing="0.5px"
+              mb={-1}
             >
               {score}%
             </Text>

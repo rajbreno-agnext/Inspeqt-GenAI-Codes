@@ -24,7 +24,7 @@ export const StatusCard = ({ title, count, icon, bgColor, iconColor }) => {
           <Circle size="40px" bg={bgColor}>
             <Icon as={icon} color={iconColor} boxSize={5} />
           </Circle>
-          <Text fontSize="12px" fontWeight="500" color="gray.600">
+          <Text fontSize="14px" fontWeight="500" color="gray.600">
             {title}
           </Text>
         </HStack>

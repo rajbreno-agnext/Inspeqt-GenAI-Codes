@@ -94,7 +94,7 @@ const DashboardPage = () => {
               color="gray.600"
             />
             <Circle 
-              size="8px" 
+              size="6px" 
               bg="red.400" 
               position="absolute" 
               top={2} 
@@ -128,7 +128,7 @@ const DashboardPage = () => {
         {/* Main Content */}
         <VStack px={4} spacing={6} pb="80px"> {/* Added bottom padding for navigation bar */}
           <CompletionScoreCard score={70.3} />
-          <VStack spacing={3} width="100%">
+          <VStack spacing={3} width="100%" mb={4}>
             {statusItems.map((item, index) => (
               <StatusCard key={index} {...item} />
             ))}
