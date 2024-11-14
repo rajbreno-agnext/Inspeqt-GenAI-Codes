@@ -4,12 +4,24 @@
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/Inspeqt-Logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#553C9A" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
     <meta
       name="description"
       content="Inspeqt - Inspection Management System"
     />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/Inspeqt-Logo.svg" />
+    <link rel="apple-touch-startup-image" href="%PUBLIC_URL%/Inspeqt-Logo.svg" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Inspeqt" />
+    <style>
+      @media screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) {
+        link[rel="apple-touch-startup-image"] {
+          width: 120px !important;
+          height: 120px !important;
+        }
+      }
+    </style>
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>Inspeqt</title>
   </head>
