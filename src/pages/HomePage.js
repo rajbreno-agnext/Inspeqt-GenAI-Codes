@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Box, VStack, Input, Button, Heading, Text, IconButton } from '@chakra-ui/react';
+import { Box, VStack, Input, Button, Heading, Text, Image } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowBackIcon } from '@chakra-ui/icons';
 
 const navigationButtons = [
   { name: 'Login', path: '/login' },
@@ -26,20 +25,19 @@ const HomePage = () => {
   return (
     <Box maxWidth="500px" margin="auto" px={4} py={8}>
       <VStack spacing={8} align="stretch">
-        <Box position="relative">
-          <IconButton
-            icon={<ArrowBackIcon />}
-            position="absolute"
-            left={0}
-            top={0}
-            variant="ghost"
-            onClick={() => navigate('/login')}
-            aria-label="Back to login"
+        <VStack spacing={6}>
+          <Image 
+            src="/Inspeqt-Logo.svg" 
+            alt="Inspeqt Logo" 
+            width="60px"
+            height="60px"
+            margin="0 auto"
+            borderRadius="12px"
           />
-          <Heading as="h1" size="lg" textAlign="center" color="brand.700">
-            Development Navigation
+          <Heading as="h1" size="lg" textAlign="center" color="gray.600">
+            Inspeqt App Navigation
           </Heading>
-        </Box>
+        </VStack>
         <Text textAlign="center" color="gray.600" fontSize="sm">
           This page is for development purposes only.
         </Text>

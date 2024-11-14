@@ -38,7 +38,7 @@ const NewPasswordPage = () => {
       minH="100vh"
       p={4}
       centerContent
-      bg="white"
+      bg="brand.700"
     >
       <Box w="full" position="relative" mt={4}>
         <IconButton
@@ -86,12 +86,12 @@ const NewPasswordPage = () => {
               placeholder="New Password"
               size="lg"
               borderRadius="12px"
-              borderColor="gray.300"
+              borderColor="brand.700"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               _focus={{
-                borderColor: "teal.500",
-                boxShadow: "0 0 0 1px #319795"
+                borderColor: "brand.700",
+                boxShadow: "0 0 0 1px"
               }}
             />
             <InputRightElement>
@@ -112,12 +112,12 @@ const NewPasswordPage = () => {
               placeholder="Confirm Password"
               size="lg"
               borderRadius="12px"
-              borderColor="gray.300"
+              borderColor="brand.700"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               _focus={{
-                borderColor: "teal.500",
-                boxShadow: "0 0 0 1px #319795"
+                borderColor: "brand.700",
+                boxShadow: "0 0 0 1px"
               }}
             />
             <InputRightElement>
@@ -134,11 +134,11 @@ const NewPasswordPage = () => {
         <Button
           w="full"
           h="48px"
-          bg="#157F63"
+          bg="brand.800"
           color="white"
           borderRadius="12px"
           _hover={{
-            bg: "#106952"
+            bg: "brand.800"
           }}
           fontSize="16px"
           fontWeight="600"
@@ -150,7 +150,7 @@ const NewPasswordPage = () => {
           <HStack spacing={2}>
             <Icon 
               as={validations.length ? BsCheckCircle : IoMdClose} 
-              color={validations.length ? "#157F63" : "gray.400"} 
+              color={validations.length ? "brand.700" : "gray.400"} 
               boxSize={3.5}
             />
             <Text color="gray.600" fontSize="14px" fontFamily="Roboto" lineHeight="23px">
@@ -160,7 +160,7 @@ const NewPasswordPage = () => {
           <HStack spacing={2}>
             <Icon 
               as={validations.letter ? BsCheckCircle : IoMdClose} 
-              color={validations.letter ? "#157F63" : "gray.400"} 
+              color={validations.letter ? "brand.700" : "gray.400"} 
               boxSize={3.5}
             />
             <Text color="gray.600" fontSize="14px" fontFamily="Roboto" lineHeight="23px">
@@ -170,7 +170,7 @@ const NewPasswordPage = () => {
           <HStack spacing={2}>
             <Icon 
               as={validations.digit ? BsCheckCircle : IoMdClose} 
-              color={validations.digit ? "#157F63" : "gray.400"} 
+              color={validations.digit ? "brand.700" : "gray.400"} 
               boxSize={3.5}
             />
             <Text color="gray.600" fontSize="14px" fontFamily="Roboto" lineHeight="23px">
@@ -180,7 +180,7 @@ const NewPasswordPage = () => {
           <HStack spacing={2}>
             <Icon 
               as={validations.special ? BsCheckCircle : IoMdClose} 
-              color={validations.special ? "#157F63" : "gray.400"} 
+              color={validations.special ? "brand.700" : "gray.400"} 
               boxSize={3.5}
             />
             <Text color="gray.600" fontSize="14px" fontFamily="Roboto" lineHeight="23px">

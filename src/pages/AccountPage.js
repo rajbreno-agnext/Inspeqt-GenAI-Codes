@@ -29,7 +29,7 @@ const AccountPage = () => {
   const InfoItem = ({ icon, title, value, noDivider }) => (
     <Box w="full">
       <HStack px={4} py={4} spacing={4} alignItems="flex-start">
-        <Box color="#4F6354" w="24px">
+        <Box color="brand.700" w="24px">
           {icon}
         </Box>
         <VStack align="start" spacing={2} flex={1}>

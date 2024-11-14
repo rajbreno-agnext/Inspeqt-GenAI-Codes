@@ -87,7 +87,7 @@ const OtpPage = () => {
               amit@gmail.com.{' '}
               <Text
                 as="span"
-                color="#157F63"
+                color="brand.700"
                 cursor="pointer"
                 _hover={{ textDecoration: 'underline' }}
                 onClick={() => navigate('/forgot-password')}
@@ -103,10 +103,10 @@ const OtpPage = () => {
             placeholder="Enter OTP"
             size="lg"
             borderRadius="12px"
-            borderColor="gray.300"
+            borderColor="brand.700"
             _focus={{
-              borderColor: "teal.500",
-              boxShadow: "0 0 0 1px #319795"
+              borderColor: "brand.700",
+              boxShadow: "0 0 0 1px"
             }}
           />
         </FormControl>
@@ -114,11 +114,11 @@ const OtpPage = () => {
         <Button
           w="full"
           h="48px"
-          bg="#157F63"
+          bg="brand.700"
           color="white"
           borderRadius="12px"
           _hover={{
-            bg: "#106952"
+            bg: "brand.800"
           }}
           fontSize="16px"
           fontWeight="600"
@@ -136,7 +136,7 @@ const OtpPage = () => {
           textAlign="center"
         >
           Resend code in{' '}
-          <Text as="span" color="#157F63">
+          <Text as="span" color="brand.700">
             {formatTime(timeLeft)}
           </Text>
         </Text>

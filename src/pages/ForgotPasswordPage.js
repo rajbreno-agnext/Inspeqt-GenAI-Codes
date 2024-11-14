@@ -69,8 +69,8 @@ const ForgotPasswordPage = () => {
             borderRadius="12px"
             borderColor="gray.300"
             _focus={{
-              borderColor: "teal.500",
-              boxShadow: "0 0 0 1px #319795"
+              borderColor: "brand.700",
+              boxShadow: "0 0 0 1px"
             }}
           />
         </FormControl>
@@ -78,11 +78,11 @@ const ForgotPasswordPage = () => {
         <Button
           w="full"
           h="48px"
-          bg="#157F63"
+          bg="brand.700"
           color="white"
           borderRadius="12px"
           _hover={{
-            bg: "#106952"
+            bg: "brand.800"
           }}
           fontSize="16px"
           fontWeight="600"
