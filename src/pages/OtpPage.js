@@ -150,6 +150,7 @@ const OtpPage = () => {
           letterSpacing="0.5px"
           textAlign="center"
           mt={8}
+          maxW="300px"
         >
           Didn't get the email? Check your spam/junk or resend it.
         </Text>
