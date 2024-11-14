@@ -6,7 +6,7 @@ import {
   Icon,
   Circle,
 } from '@chakra-ui/react';
-import { HiChevronDown } from 'react-icons/hi';
+import { ArrowDown01Icon } from 'hugeicons-react';
 
 export const StatusCard = ({ title, count, icon, bgColor, iconColor }) => {
   return (
@@ -32,7 +32,7 @@ export const StatusCard = ({ title, count, icon, bgColor, iconColor }) => {
           <Text fontSize="16px" fontWeight="600" color="gray.800">
             {count}
           </Text>
-          <Icon as={HiChevronDown} color="gray.600" transform="rotate(-90deg)" />
+          <Icon as={ArrowDown01Icon} color="gray.600" transform="rotate(-90deg)" />
         </HStack>
       </HStack>
     </Box>

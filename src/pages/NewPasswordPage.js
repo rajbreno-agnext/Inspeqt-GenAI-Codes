@@ -13,10 +13,9 @@ import {
   HStack,
   Icon,
 } from '@chakra-ui/react';
-import { ArrowBackIcon, ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+import { ArrowBackIcon } from '@chakra-ui/icons';
 import { useNavigate } from 'react-router-dom';
-import { BsCheckCircle } from 'react-icons/bs';
-import { IoMdClose } from 'react-icons/io';
+import { ViewIcon, ViewOffIcon, CheckmarkCircle02Icon, CancelCircleIcon } from 'hugeicons-react';
 
 const NewPasswordPage = () => {
   const navigate = useNavigate();
@@ -149,7 +148,7 @@ const NewPasswordPage = () => {
         <VStack align="stretch" w="full" spacing={2}>
           <HStack spacing={2}>
             <Icon 
-              as={validations.length ? BsCheckCircle : IoMdClose} 
+              as={validations.length ? CheckmarkCircle02Icon : CancelCircleIcon} 
               color={validations.length ? "brand.700" : "gray.400"} 
               boxSize={3.5}
             />
@@ -159,7 +158,7 @@ const NewPasswordPage = () => {
           </HStack>
           <HStack spacing={2}>
             <Icon 
-              as={validations.letter ? BsCheckCircle : IoMdClose} 
+              as={validations.letter ? CheckmarkCircle02Icon : CancelCircleIcon} 
               color={validations.letter ? "brand.700" : "gray.400"} 
               boxSize={3.5}
             />
@@ -169,7 +168,7 @@ const NewPasswordPage = () => {
           </HStack>
           <HStack spacing={2}>
             <Icon 
-              as={validations.digit ? BsCheckCircle : IoMdClose} 
+              as={validations.digit ? CheckmarkCircle02Icon : CancelCircleIcon} 
               color={validations.digit ? "brand.700" : "gray.400"} 
               boxSize={3.5}
             />
@@ -179,7 +178,7 @@ const NewPasswordPage = () => {
           </HStack>
           <HStack spacing={2}>
             <Icon 
-              as={validations.special ? BsCheckCircle : IoMdClose} 
+              as={validations.special ? CheckmarkCircle02Icon : CancelCircleIcon} 
               color={validations.special ? "brand.700" : "gray.400"} 
               boxSize={3.5}
             />

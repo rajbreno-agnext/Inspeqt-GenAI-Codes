@@ -10,7 +10,7 @@ import {
   IconButton,
   HStack,
 } from '@chakra-ui/react';
-import { ArrowBackIcon } from '@chakra-ui/icons';
+import { ArrowLeft02Icon } from 'hugeicons-react';
 import { useNavigate } from 'react-router-dom';
 
 const OtpPage = () => {
@@ -50,7 +50,7 @@ const OtpPage = () => {
     >
       <Box w="full" position="relative" mt={4}>
         <IconButton
-          icon={<ArrowBackIcon />}
+          icon={<ArrowLeft02Icon />}
           variant="ghost"
           position="absolute"
           left={0}

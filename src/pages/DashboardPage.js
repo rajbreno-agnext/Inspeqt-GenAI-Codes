@@ -10,12 +10,17 @@ import {
   Circle,
 } from '@chakra-ui/react';
 import { 
-  HiOutlineMenu, 
-  HiOutlineSearch, 
-  HiOutlineBell,
-  HiOutlineHome,
-  HiOutlineUser
-} from 'react-icons/hi';
+  Menu02Icon,
+  Search01Icon,
+  Home01Icon,
+  Note01Icon,
+  Notification01Icon,
+  UserIcon,
+  Alert01Icon,
+  Clock04Icon,
+  Calendar03Icon,
+  CheckmarkCircle02Icon
+} from 'hugeicons-react';
 import { CompletionScoreCard } from '../components/CompletionScoreCard';
 import { StatusCard } from '../components/StatusCard';
 
@@ -24,28 +29,28 @@ const DashboardPage = () => {
     { 
       title: 'Overdue', 
       count: 2, 
-      icon: HiOutlineHome,
+      icon: Alert01Icon,
       bgColor: '#FFF5F5',
       iconColor: '#C53030' 
     },
     { 
       title: 'In Progress', 
       count: 6, 
-      icon: HiOutlineHome,
+      icon: Clock04Icon,
       bgColor: '#EBF8FF',
       iconColor: '#2B6CB0'
     },
     { 
       title: 'Scheduled', 
       count: 10, 
-      icon: HiOutlineHome,
+      icon: Calendar03Icon,
       bgColor: '#FFFAF0',
       iconColor: '#C05621'
     },
     { 
       title: 'Completed', 
       count: 103, 
-      icon: HiOutlineHome,
+      icon: CheckmarkCircle02Icon,
       bgColor: '#F0FFF4',
       iconColor: '#25855A'
     },
@@ -63,7 +68,7 @@ const DashboardPage = () => {
       >
         <Flex align="center" flex={1}>
           <IconButton
-            icon={<HiOutlineMenu size={24} />}
+            icon={<Menu02Icon size={24} />}
             variant="ghost"
             color="gray.600"
             mr={1}
@@ -78,13 +83,13 @@ const DashboardPage = () => {
         </Flex>
         <HStack spacing={2}>
           <IconButton
-            icon={<HiOutlineSearch size={24} />}
+            icon={<Search01Icon size={24} />}
             variant="ghost"
             color="gray.600"
           />
           <Box position="relative">
             <IconButton
-              icon={<HiOutlineBell size={24} />}
+              icon={<Notification01Icon size={24} />}
               variant="ghost"
               color="gray.600"
             />
@@ -147,15 +152,15 @@ const DashboardPage = () => {
       >
         <Flex justify="space-between">
           <VStack flex={1} spacing={1}>
-            <HiOutlineHome size={24} color="#2D3748" />
+            <Home01Icon size={24} color="#2D3748" />
             <Text fontSize="12px" color="gray.700" fontWeight="500">Home</Text>
           </VStack>
           <VStack flex={1} spacing={1}>
-            <Box as="img" src="/inspection-icon.svg" w={6} h={6} />
+            <Note01Icon size={24} color="#2D3748" />
             <Text fontSize="12px" color="gray.600" fontWeight="500">Inspections</Text>
           </VStack>
           <VStack flex={1} spacing={1}>
-            <HiOutlineUser size={24} color="#4A5568" />
+            <UserIcon size={24} color="#4A5568" />
             <Text fontSize="12px" color="gray.600" fontWeight="500">Account</Text>
           </VStack>
         </Flex>

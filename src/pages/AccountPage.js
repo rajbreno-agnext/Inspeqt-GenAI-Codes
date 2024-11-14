@@ -11,7 +11,14 @@ import {
 } from '@chakra-ui/react';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { useNavigate } from 'react-router-dom';
-import { HiOutlineMail, HiOutlineUser, HiOutlinePhone, HiOutlineLocationMarker, HiOutlineCalendar } from 'react-icons/hi';
+import { 
+  ArrowLeft02Icon,
+  UserIcon,
+  Mail01Icon,
+  SmartPhone01Icon,
+  Location01Icon,
+  Calendar02Icon
+} from 'hugeicons-react';
 
 const AccountPage = () => {
   const navigate = useNavigate();
@@ -112,27 +119,27 @@ const AccountPage = () => {
       {/* Info Items */}
       <VStack spacing={0} align="stretch">
         <InfoItem
-          icon={<HiOutlineUser size={24} />}
+          icon={<UserIcon size={24} />}
           title="User ID"
           value={userInfo.userId}
         />
         <InfoItem
-          icon={<HiOutlineMail size={24} />}
+          icon={<Mail01Icon size={24} />}
           title="Email"
           value={userInfo.email}
         />
         <InfoItem
-          icon={<HiOutlinePhone size={24} />}
+          icon={<SmartPhone01Icon size={24} />}
           title="Phone number"
           value={userInfo.phone}
         />
         <InfoItem
-          icon={<HiOutlineLocationMarker size={24} />}
+          icon={<Location01Icon size={24} />}
           title="Address"
           value={userInfo.address}
         />
         <InfoItem
-          icon={<HiOutlineCalendar size={24} />}
+          icon={<Calendar02Icon size={24} />}
           title="Date of joining"
           value={userInfo.joiningDate}
           noDivider

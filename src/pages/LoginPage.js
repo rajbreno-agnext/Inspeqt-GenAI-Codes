@@ -12,7 +12,7 @@ import {
   InputRightElement,
   IconButton,
 } from '@chakra-ui/react';
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+import { ViewIcon, ViewOffIcon } from 'hugeicons-react';
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
