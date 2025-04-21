@@ -1,183 +1,186 @@
 import React from 'react';
 import {
   Box,
+  Container,
   VStack,
   HStack,
   Text,
-  Flex,
-  Icon,
   IconButton,
-  Spacer,
+  Flex,
+  Circle,
 } from '@chakra-ui/react';
-import { FiBell, FiSearch, FiCalendar, FiClock, FiCheckCircle, FiInfo, FiChevronRight } from 'react-icons/fi';
-import { RiHome5Line, RiFileList3Line, RiUser3Line } from 'react-icons/ri';
-import { HamburgerIcon } from '@chakra-ui/icons';
-import { Doughnut } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-
-ChartJS.register(ArcElement, Tooltip, Legend);
+import { 
+  Menu02Icon,
+  Search01Icon,
+  Home01Icon,
+  Note01Icon,
+  Notification01Icon,
+  UserIcon,
+  Alert01Icon,
+  Clock04Icon,
+  Calendar03Icon,
+  CheckmarkCircle02Icon
+} from 'hugeicons-react';
+import { CompletionScoreCard } from '../components/CompletionScoreCard';
+import { StatusCard } from '../components/StatusCard';
+import { useStatusBarColor } from '../hooks/useStatusBarColor';
 
 const DashboardPage = () => {
-  const completionScore = 80.3;
+  const [score, setScore] = React.useState(0);
+  
+  React.useEffect(() => {
+    // Increased initial delay slightly for better visual effect
+    const timer = setTimeout(() => {
+      setScore(70.3);
+    }, 800);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
-  const chartData = {
-    datasets: [
-      {
-        data: [completionScore, 100 - completionScore],
-        backgroundColor: ['#38A169', '#E2E8F0'],
-        borderWidth: 0,
-        cutout: '80%',
-      },
-    ],
-  };
+  useStatusBarColor("#f4f4f669");
 
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        enabled: false,
-      },
+  const statusItems = [
+    { 
+      title: 'Overdue', 
+      count: 2, 
+      icon: Alert01Icon,
+      bgColor: '#FFF5F5',
+      iconColor: '#C53030' 
     },
-  };
+    { 
+      title: 'In Progress', 
+      count: 6, 
+      icon: Clock04Icon,
+      bgColor: '#EBF8FF',
+      iconColor: '#2B6CB0'
+    },
+    { 
+      title: 'Scheduled', 
+      count: 10, 
+      icon: Calendar03Icon,
+      bgColor: '#FFFAF0',
+      iconColor: '#C05621'
+    },
+    { 
+      title: 'Completed', 
+      count: 103, 
+      icon: CheckmarkCircle02Icon,
+      bgColor: '#F0FFF4',
+      iconColor: '#25855A'
+    },
+  ];
 
   return (
-    <Box bg="gray.50" minHeight="100vh" maxWidth="400px" margin="0 auto">
-      <VStack spacing={4} align="stretch" p={4}>
-        {/* Header */}
-        <Flex justifyContent="space-between" alignItems="center">
-          <HStack spacing={3}>
-            <IconButton
-              icon={<HamburgerIcon />}
-              variant="ghost"
-              colorScheme="gray"
-              aria-label="Menu"
-            />
-            <Text fontSize="xl" fontWeight="bold" color="gray.700">Home</Text>
-          </HStack>
-          <HStack spacing={3}>
-            <IconButton
-              icon={<FiSearch />}
-              variant="ghost"
-              colorScheme="gray"
-              aria-label="Search"
-            />
-            <IconButton
-              icon={<FiBell />}
-              variant="ghost"
-              colorScheme="gray"
-              aria-label="Notifications"
-            />
-          </HStack>
+    <Container maxW="400px" p={0} bg="#f4f4f669" minH="100vh">
+      {/* Top Bar - No border */}
+      <Box 
+        h="56px" 
+        px={2}
+        display="flex"
+        alignItems="center"
+        zIndex={10}
+      >
+        <Flex align="center" flex={1}>
+          <IconButton
+            icon={<Menu02Icon size={24} />}
+            variant="ghost"
+            color="gray.600"
+            mr={1}
+          />
+          <Text
+            fontSize="20px"
+            fontWeight="500"
+            color="gray.700"
+          >
+            Home
+          </Text>
         </Flex>
+        <HStack spacing={2}>
+          <IconButton
+            icon={<Search01Icon size={24} />}
+            variant="ghost"
+            color="gray.600"
+          />
+          <Box position="relative">
+            <IconButton
+              icon={<Notification01Icon size={24} />}
+              variant="ghost"
+              color="gray.600"
+            />
+            <Circle 
+              size="6px" 
+              bg="red.400" 
+              position="absolute" 
+              top={2} 
+              right={2}
+            />
+          </Box>
+        </HStack>
+      </Box>
 
-        {/* Greeting */}
-        <VStack align="center" spacing={1} my={6}>
-          <Text fontSize="2xl" fontWeight="bold" color="gray.700">
+      {/* Content no longer needs top padding since header isn't fixed */}
+      <Box>
+        {/* Welcome Section */}
+        <VStack px={4} pt={8} pb={8} align="center" spacing={1}>
+          <Text
+            fontSize="28px"
+            fontWeight="600"
+            color="gray.700"
+            lineHeight="36px"
+          >
             Hi, Amit 👋
           </Text>
-          <Text color="gray.500">Welcome back!</Text>
+          <Text
+            fontSize="16px"
+            color="gray.600"
+            letterSpacing="0.5px"
+          >
+            Welcome back!
+          </Text>
         </VStack>
 
-        {/* Completion Score */}
-        <Box bg="green.600" borderRadius="lg" p={4} color="white">
-          <Flex justifyContent="space-between" alignItems="center" mb={4}>
-            <Text fontWeight="bold">Completion Score</Text>
-            <Icon as={FiInfo} />
-          </Flex>
-          <Box height="164px" position="relative">
-            <Doughnut data={chartData} options={chartOptions} />
-            <Flex
-              position="absolute"
-              top="0"
-              left="0"
-              right="0"
-              bottom="0"
-              alignItems="center"
-              justifyContent="center"
-              flexDirection="column"
-            >
-              <Text fontSize="2xl" fontWeight="bold">
-                {completionScore}%
-              </Text>
-              <Text fontSize="sm">Score</Text>
-            </Flex>
-          </Box>
-        </Box>
-
-        {/* Status Cards */}
-        <VStack spacing={3} align="stretch">
-          {[
-            { icon: FiClock, label: 'Overdue', count: 2, color: 'red.500' },
-            { icon: FiClock, label: 'In Progress', count: 6, color: 'blue.500' },
-            { icon: FiCalendar, label: 'Scheduled', count: 10, color: 'orange.500' },
-            { icon: FiCheckCircle, label: 'Completed', count: 103, color: 'green.500' },
-          ].map((item, index) => (
-            <Flex
-              key={index}
-              bg="white"
-              p={3}
-              borderRadius="xl"
-              alignItems="center"
-              boxShadow="sm"
-            >
-              <Icon as={item.icon} color={item.color} boxSize={5} mr={3} />
-              <Text fontWeight="normal" color="gray.700">{item.label}</Text>
-              <Spacer />
-              <Text fontWeight="bold" color="gray.700">{item.count}</Text>
-              <Icon as={FiChevronRight} ml={2} color="gray.400" />
-            </Flex>
-          ))}
+        {/* Main Content */}
+        <VStack px={4} spacing={6} pb="80px"> {/* Added bottom padding for navigation bar */}
+          <CompletionScoreCard score={score} />
+          <VStack spacing={3} width="100%" mb={4}>
+            {statusItems.map((item, index) => (
+              <StatusCard key={index} {...item} />
+            ))}
+          </VStack>
         </VStack>
-      </VStack>
+      </Box>
 
-      {/* Bottom Navigation */}
-      <Flex
-        position="fixed"
-        bottom={0}
-        left={0}
+      {/* Navigation Bar - remains unchanged */}
+      <Box 
+        position="fixed" 
+        bottom={0} 
+        left={0} 
         right={0}
+        maxW="400px"
+        mx="auto"
+        borderTop="1px solid"
+        borderColor="gray.200"
         bg="white"
-        justifyContent="space-around"
-        py={2}
-        borderTopWidth={1}
-        borderTopColor="gray.200"
-        maxWidth="400px"
-        margin="0 auto"
+        px={2}
+        py={3}
       >
-        <VStack>
-          <IconButton
-            icon={<RiHome5Line />}
-            variant="ghost"
-            aria-label="Home"
-            color="blue.500"
-          />
-          <Text fontSize="xs" color="blue.500">Home</Text>
-        </VStack>
-        <VStack>
-          <IconButton
-            icon={<RiFileList3Line />}
-            variant="ghost"
-            aria-label="Inspections"
-            color="gray.500"
-          />
-          <Text fontSize="xs" color="gray.500">Inspections</Text>
-        </VStack>
-        <VStack>
-          <IconButton
-            icon={<RiUser3Line />}
-            variant="ghost"
-            aria-label="Account"
-            color="gray.500"
-          />
-          <Text fontSize="xs" color="gray.500">Account</Text>
-        </VStack>
-      </Flex>
-    </Box>
+        <Flex justify="space-between">
+          <VStack flex={1} spacing={1}>
+            <Home01Icon size={24} color="#2D3748" />
+            <Text fontSize="12px" color="gray.700" fontWeight="500">Home</Text>
+          </VStack>
+          <VStack flex={1} spacing={1}>
+            <Note01Icon size={24} color="#2D3748" />
+            <Text fontSize="12px" color="gray.600" fontWeight="500">Inspections</Text>
+          </VStack>
+          <VStack flex={1} spacing={1}>
+            <UserIcon size={24} color="#4A5568" />
+            <Text fontSize="12px" color="gray.600" fontWeight="500">Account</Text>
+          </VStack>
+        </Flex>
+      </Box>
+    </Container>
   );
 };
 
-export default DashboardPage;
+export default DashboardPage; 

@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { Box, VStack, Input, Button, Heading, Text } from '@chakra-ui/react';
+import { Box, VStack, Input, Button, Heading, Text, Image } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
 const navigationButtons = [
   { name: 'Dashboard', path: '/dashboard' },
-  { name: 'Create Job', path: '/create-job' },
-  { name: 'Sidebar Preview', path: '/sidebar' },
-  { name: 'Form Builder', path: '/form-builder' },
-  { name: 'Bulk Location Upload', path: '/custom-code' },
-  // Add more navigation buttons here as needed
+  { name: 'Login', path: '/login' },
+  { name: 'Forgot Password', path: '/forgot-password' },
+  { name: 'OTP Verification', path: '/otp' },
+  { name: 'New Password', path: '/new-password' },
+  { name: 'Account', path: '/accounts' },
 ];
 
 const HomePage = () => {
@@ -26,9 +26,22 @@ const HomePage = () => {
   return (
     <Box maxWidth="500px" margin="auto" px={4} py={8}>
       <VStack spacing={8} align="stretch">
-        <Heading as="h1" size="lg" textAlign="center" color="brand.700">
-          Navigate Inspeqt Page
-        </Heading>
+        <VStack spacing={6}>
+          <Image 
+            src="/Inspeqt-Logo.svg" 
+            alt="Inspeqt Logo" 
+            width="60px"
+            height="60px"
+            margin="0 auto"
+            borderRadius="12px"
+          />
+          <Heading as="h1" size="lg" textAlign="center" color="gray.600">
+            Inspeqt App
+          </Heading>
+        </VStack>
+        <Text textAlign="center" color="gray.600" fontSize="sm">
+          This page is for development purposes only.
+        </Text>
         <Input 
           placeholder="Search pages..." 
           value={searchQuery}
@@ -36,9 +49,6 @@ const HomePage = () => {
           size="lg"
           focusBorderColor="brand.400"
         />
-        <Text textAlign="center" color="gray.500">
-          Search for pages or select from the options below
-        </Text>
         <VStack spacing={4}>
           {filteredButtons.map((button, index) => (
             <Button
