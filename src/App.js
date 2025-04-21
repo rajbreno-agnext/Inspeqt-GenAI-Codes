@@ -10,11 +10,12 @@ import CreateJobPage from './pages/CreateJobPage';
 import SidebarPreviewPage from './pages/SidebarPreviewPage';
 import FormBuilderPage from './pages/FormBuilderPage';
 import BulkLocationUploadModal from './pages/BulkLocationUploadModal';
-import theme from './theme'; // Import your custom theme
+import NotificationPage from './pages/notification';
+import theme from './theme';
 
 function App() {
   return (
-    <ChakraProvider theme={theme}> {/* Apply your custom theme here */}
+    <ChakraProvider theme={theme}>
       <Router>
         <Box bg="gray.50" minHeight="100vh">
           <Routes>
@@ -24,6 +25,7 @@ function App() {
             <Route path="/sidebar" element={<SidebarPreviewPage />} />
             <Route path="/form-builder" element={<FormBuilderPage />} />
             <Route path="/custom-code" element={<BulkLocationUploadModal />} />
+            <Route path="/notification" element={<NotificationPage />} />
           </Routes>
         </Box>
       </Router>
